@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.Collections.Generic;
+using System.Windows;
 
 namespace AleWk1
 {
@@ -7,14 +9,33 @@ namespace AleWk1
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        List<string> operators;
+                public MainWindow()
         {
             InitializeComponent();
+            operators = new List<string>()
+            {
+                "~",
+                "&",
+                "|",
+                ">",
+                "=",
+            };
         }
 
         private void btnParse_Click(object sender, RoutedEventArgs e)
         {
+            ParseInfix(tbPrefix.Text.Trim());
+        }
 
+        private void ParseInfix(string text)
+        {
+            GetTree(text);
+        }
+
+        private void GetTree(string text)
+        {
+            
         }
     }
 }
