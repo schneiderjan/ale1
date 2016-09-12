@@ -69,26 +69,7 @@ namespace AleWk1
 
             foreach (var n in flatList)
             {
-                //n is a child with right/left with a not as parent.
-                if (n.LeftChild == null 
-                    && n.RightChild == null
-                    && flatList[flatList.IndexOf(n) +1].LeftChild == null
-                    && flatList[flatList.IndexOf(n) + 1].RightChild == null)
-                {
-                    n.Parent = flatList[flatList.IndexOf(n) + 3];
-                }
-                else if (n.LeftChild == null
-                    && n.RightChild == null)
-                {
-                    n.Parent = flatList[flatList.IndexOf(n) + 1];
-                }
-                //n must be a NOT operator if either one operand is null
-                //and first condition is already true.
-                else if (n.LeftChild == null
-                    || n.RightChild == null)
-                {
-                    n.Parent = flatList[flatList.IndexOf(n) + 2];
-                }
+
 
                 //infixs.Add(n);
             }
@@ -138,3 +119,34 @@ namespace AleWk1
         }
     }
 }
+
+////n is a child with right/left with a not as parent.
+//if (n.LeftChild == null 
+//    && n.RightChild == null
+//    && flatList[flatList.IndexOf(n) +1].LeftChild == null
+//    && flatList[flatList.IndexOf(n) + 1].RightChild == null)
+//{
+//    n.Parent = flatList[flatList.IndexOf(n) + 3];
+//}
+//else if (n.LeftChild == null
+//    && n.RightChild == null
+//    )
+//{
+//    n.Parent = flatList[flatList.IndexOf(n) + 1];
+//}
+////n must be a NOT operator if either one operand is null
+////and first condition is already true.
+//else if (n.LeftChild == null
+//    || n.RightChild == null
+//    && n.Value.Equals(not))
+//{
+//    n.Parent = flatList[flatList.IndexOf(n) + 1];
+//}
+//else if (operators.Contains(flatList[flatList.IndexOf(n) + 1].Value))
+//{
+//    n.Parent = flatList[flatList.IndexOf(n) + 1];
+//}
+//else if (operators.Contains(flatList[flatList.IndexOf(n)].Value))
+//{
+//    n.Parent = flatList[flatList.IndexOf(n) + 1];
+//}
