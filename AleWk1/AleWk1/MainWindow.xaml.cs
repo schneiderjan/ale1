@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace AleWk1
 {
@@ -23,9 +24,11 @@ namespace AleWk1
                 ">",
                 "=",
             };
-            tbPrefix.Text = "&(A, ~(B))";
+            tbPrefix.Text = "=( >(A,B), |( ~(A) ,B) )";
             //"=( >(A,B), |( ~(A) ,B) )
             //&(A, ~(B))
+            btnParse.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+
         }
 
         private void btnParse_Click(object sender, RoutedEventArgs e)
@@ -64,9 +67,30 @@ namespace AleWk1
             List<Node> infixs = new List<Node>();
             var output = "";
 
-            foreach (var c in flatList)
+            foreach (var n in flatList)
             {
-                infixs.Add(c);
+                //n is a child with right/left with a not as parent.
+                if (n.LeftChild == null 
+                    && n.RightChild == null
+                    && flatList[flatList.IndexOf(n) +1].LeftChild == null
+                    && flatList[flatList.IndexOf(n) + 1].RightChild == null)
+                {
+                    n.Parent = flatList[flatList.IndexOf(n) + 3];
+                }
+                else if (n.LeftChild == null
+                    && n.RightChild == null)
+                {
+                    n.Parent = flatList[flatList.IndexOf(n) + 1];
+                }
+                //n must be a NOT operator if either one operand is null
+                //and first condition is already true.
+                else if (n.LeftChild == null
+                    || n.RightChild == null)
+                {
+                    n.Parent = flatList[flatList.IndexOf(n) + 2];
+                }
+
+                //infixs.Add(n);
             }
 
             foreach (var i in infixs)
