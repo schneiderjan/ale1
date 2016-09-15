@@ -40,7 +40,7 @@
         </Grid>
 
         <Grid Grid.Row="2">
-            <ListView x:Name="lvDebug"></ListView>
+            <Image x:Name="imgGraph"></Image>
         </Grid>
         
     </Grid>
