@@ -6,14 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Annotations.Storage;
-using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+//using System.Windows.Controls;
 
 namespace AleWk1
 {
     public static class Helper
     {
-
         internal static List<string> operators = new List<string>()
             {
                 "&",
@@ -65,7 +64,52 @@ namespace AleWk1
             }
         }
 
-        internal static void DisplayGraph(Image imgGraph)
+        internal static string GetInfixString(List<Node> flatList)
+        {
+            var infix = "";
+
+            //    public void InOrder(Node root, Node previous)
+            //{
+            //    if (root == null)
+            //    {
+            //        return;
+            //    }
+
+            //    if (previous != null && root.Right != null)
+            //    {
+            //        _infixNotation = _infixNotation + "( ";
+
+            //        InOrder(root.Left, root);
+
+            //        if (IsPredicate(root.Value))
+            //            _infixNotation = _infixNotation + LogicPredicate(root.Value);
+            //        else
+            //            _infixNotation = _infixNotation + root.Value;
+
+            //        InOrder(root.Right, root);
+
+            //        _infixNotation = _infixNotation + " )";
+            //    }
+            //    else
+            //    {
+            //        InOrder(root.Left, root);
+
+            //        if (IsPredicate(root.Value))
+            //            _infixNotation = _infixNotation + LogicPredicate(root.Value);
+            //        else
+            //            _infixNotation = _infixNotation + root.Value;
+
+            //        InOrder(root.Right, root);
+            //    }
+            //}
+
+
+
+
+            return infix;
+        }
+
+        internal static async void DisplayGraph(System.Windows.Controls.Image imgGraph)
         {
             using (var p = new Process())
             {
@@ -73,13 +117,20 @@ namespace AleWk1
                 var dotPath = path + "\\dot.dot";
                 var imgPath = path + "\\dot.png";
 
-                p.StartInfo.Verb = "runas";
-                p.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
+                //p.StartInfo.Verb = "runas";
                 p.StartInfo.FileName = @"C:\Program Files (x86)\Graphviz2.38\bin\dot.exe";
                 p.StartInfo.Arguments = " -Tpng -odot.png " + dotPath;
                 p.Start();
                 p.WaitForExit();
 
+
+                //var bitmap = new BitmapImage();
+                ////using (var stream = File.OpenRead(imgPath))
+                //using (var stream = )
+                //{
+                //    bitmap.StreamSource = stream;
+                //}
+                //imgGraph.Source = bitmap;
                 imgGraph.Source = new BitmapImage(new Uri(@imgPath));
             }
         }

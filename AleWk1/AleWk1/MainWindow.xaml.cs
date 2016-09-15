@@ -16,12 +16,11 @@ namespace AleWk1
             InitializeComponent();
             
             
-            tbPrefix.Text = "=( >(A,B), |( ~(A) ,B) )";
+            tbPrefix.Text = "&(=(A,B),|(C,D))";
             //"=( >(A,B), |( ~(A) ,B) )
             //&(A, ~(B))
             //&(=(A,B),|(C,D))
             btnParse.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-
         }
 
         private void btnParse_Click(object sender, RoutedEventArgs e)
@@ -44,22 +43,10 @@ namespace AleWk1
 
             Helper.WriteToFile(flatList);
             Helper.DisplayGraph(imgGraph);
-            //imgGraph.Source = new BitmapImage(new Uri("dot.png", UriKind.Relative));
-            //D:\Code\GitHub\4_fourth_year_block1\ale1\AleWk1\AleWk1\bin\Debug
+            var infix = Helper.GetInfixString(flatList);
 
-
-            //List<Node> infixs = new List<Node>();
-            //var output = "";
-            //foreach (var i in infixs)
-            //{
-            //    output += i.Value;
-            //}
-            //tbInfix.Text = output;
-        }
-
-        
-
-       
+            tbInfix.Text = infix;
+        }      
     }
 }
 
