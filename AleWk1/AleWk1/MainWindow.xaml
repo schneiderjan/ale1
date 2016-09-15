@@ -38,6 +38,10 @@
 
             <TextBox Name="tbInfix" Grid.Column="1" Text=""></TextBox>
         </Grid>
+
+        <Grid Grid.Row="2">
+            <ListView x:Name="lvDebug"></ListView>
+        </Grid>
         
     </Grid>
 </Window>

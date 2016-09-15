@@ -24,9 +24,10 @@ namespace AleWk1
                 ">",
                 "=",
             };
-            tbPrefix.Text = "=( >(A,B), |( ~(A) ,B) )";
+            tbPrefix.Text = "&(=(A,B),|(~C,D))";
             //"=( >(A,B), |( ~(A) ,B) )
             //&(A, ~(B))
+            //&(=(A,B),|(C,D))
             btnParse.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
 
         }
@@ -40,26 +41,10 @@ namespace AleWk1
                 .Replace(@" ", "")
                 .Trim();
 
-            var prefixInput = ConvertStringToList(input);
-            var reversedPrefixInput = ReverseList(prefixInput);
+            var prefixInput = Helper.ConvertStringToList(input);
+            var reversedPrefixInput = Helper.ReverseList(prefixInput);
             ParseInfix(reversedPrefixInput);
-        }
-
-        private List<string> ReverseList(List<string> prefixInput)
-        {
-            prefixInput.Reverse();
-            return prefixInput;
-        }
-
-        private List<string> ConvertStringToList(string input)
-        {
-            List<string> chars = new List<string>();
-            foreach (var c in input)
-            {
-                chars.Add(c.ToString());
-            }
-            return chars;
-        }
+        }      
 
         private void ParseInfix(List<string> reversedPrefixInput)
         {
@@ -67,18 +52,48 @@ namespace AleWk1
             List<Node> infixs = new List<Node>();
             var output = "";
 
-            foreach (var n in flatList)
-            {
-
-
-                //infixs.Add(n);
-            }
+            GenerateGraph(flatList);
 
             foreach (var i in infixs)
             {
                 output += i.Value;
             }
             tbInfix.Text = output;
+        }
+
+        private void GenerateGraph(List<Node> flatList)
+        {
+            List<string> txtFileLines = new List<string>();
+
+            txtFileLines.Add("graph logic {");
+            txtFileLines.Add("node[fontname = \"Arial\"]");
+
+            foreach (var node in flatList)
+            {
+                var label = string.Format("node{0} [ label = \" {1} \" ]", flatList.IndexOf(node) + 1, node.Value);
+                txtFileLines.Add(label);
+            }
+
+            foreach (var node in flatList)
+            {
+                if (node.LeftChild != null)
+                {
+                    var nodeConnection = string.Format("node{0} -- node{1}",
+                        flatList.IndexOf(node) + 1, flatList.IndexOf(node.LeftChild)+1);
+                    txtFileLines.Add(nodeConnection);
+                }
+                if (node.RightChild != null)
+                {
+                    var nodeConnection = string.Format("node{0} -- node{1}",
+                        flatList.IndexOf(node) + 1, flatList.IndexOf(node.RightChild)+1);
+                    txtFileLines.Add(nodeConnection);
+                }
+            }
+
+            txtFileLines.Add("}");
+            Helper.WriteToFile(txtFileLines);
+            Helper.DisplayGraph();
+
         }
 
         private List<Node> GetTree(List<string> reversedPrefixInput)
@@ -89,8 +104,8 @@ namespace AleWk1
             {
                 if (IsOperator(c))
                 {
-                    Node rightOperand = stack.Pop();
                     Node leftOperand = stack.Pop();
+                    Node rightOperand = stack.Pop();
                     var node = new Node(c, leftOperand, rightOperand);
                     flatList.Add(node);
                     stack.Push(node);
