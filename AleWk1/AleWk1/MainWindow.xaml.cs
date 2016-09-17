@@ -18,7 +18,6 @@ namespace AleWk1
             //"=( >(A,B), |( ~(A) ,B) )
             //&(A, ~(B))
             //&(=(A,B),|(C,D))
-            btnParse.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         }
 
         private void btnParse_Click(object sender, RoutedEventArgs e)

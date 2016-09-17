@@ -5,11 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AleWk1"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="138" Width="525">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30
-                           "/>
+            <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
@@ -40,15 +39,15 @@
         </Grid>
 
         <Grid Grid.Row="2" Margin="0,2,5,2">
-            <!--<Image x:Name="imgGraph"></Image>-->
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
-             <Label Grid.Column="0" Content="Values" Width="50"></Label>
+            <Label Grid.Column="0" Content="Values" Width="50"></Label>
 
             <TextBox Name="tbValues" Grid.Column="1" Text=""></TextBox>
         </Grid>
-        
+
+
     </Grid>
 </Window>

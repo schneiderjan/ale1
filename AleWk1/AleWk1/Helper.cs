@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Annotations.Storage;
-using System.Windows.Media.Imaging;
-//using System.Windows.Controls;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace AleWk1
 {
@@ -133,53 +131,16 @@ namespace AleWk1
                     break;
             }
             return op;
-
         }
-
-
-        //    public void InOrder(Node root, Node previous)
-        //{
-        //    if (root == null)
-        //    {
-        //        return;
-        //    }
-
-        //    if (previous != null && root.Right != null)
-        //    {
-        //        _infixNotation = _infixNotation + "( ";
-
-        //        InOrder(root.Left, root);
-
-        //        if (IsPredicate(root.Value))
-        //            _infixNotation = _infixNotation + LogicPredicate(root.Value);
-        //        else
-        //            _infixNotation = _infixNotation + root.Value;
-
-        //        InOrder(root.Right, root);
-
-        //        _infixNotation = _infixNotation + " )";
-        //    }
-        //    else
-        //    {
-        //        InOrder(root.Left, root);
-
-        //        if (IsPredicate(root.Value))
-        //            _infixNotation = _infixNotation + LogicPredicate(root.Value);
-        //        else
-        //            _infixNotation = _infixNotation + root.Value;
-
-        //        InOrder(root.Right, root);
-        //    }
-        //}
-
 
         internal static void DisplayGraph()
         {
+            var path = AppDomain.CurrentDomain.BaseDirectory;
+            var dotPath = path + "\\dot.dot";
+            var imgPath = path + "\\dot.png";
+
             using (var p = new Process())
             {
-                var path = AppDomain.CurrentDomain.BaseDirectory;
-                var dotPath = path + "\\dot.dot";
-                var imgPath = path + "\\dot.png";
 
                 p.StartInfo.Verb = "runas";
                 p.StartInfo.FileName = @"C:\Program Files (x86)\Graphviz2.38\bin\dot.exe";
@@ -190,9 +151,6 @@ namespace AleWk1
 
             using (var p = new Process())
             {
-                var path = AppDomain.CurrentDomain.BaseDirectory;
-                var imgPath = path + "\\dot.png";
-
                 p.StartInfo.FileName = @imgPath;
                 p.Start();
             }
