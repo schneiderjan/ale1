@@ -14,8 +14,6 @@ namespace AleWk1
         public MainWindow()
         {
             InitializeComponent();
-
-
             tbPrefix.Text = "&(=(A,B),|(C,D))";
             //"=( >(A,B), |( ~(A) ,B) )
             //&(A, ~(B))
@@ -43,7 +41,8 @@ namespace AleWk1
             tbInfix.Text = Helper.GetInfixString(flatList);
 
             Helper.WriteToFile(flatList);
-            Helper.DisplayGraph(imgGraph);
+            Helper.DisplayGraph();
+            tbValues.Text = Helper.GetDistinctVariables(flatList);
         }
     }
 }

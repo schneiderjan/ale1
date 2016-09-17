@@ -65,6 +65,16 @@ namespace AleWk1
             }
         }
 
+        internal static string GetDistinctVariables(List<Node> flatList)
+        {
+            string vars = "";
+            foreach (var n in flatList)
+            {
+                if (!IsOperator(n.Value)) vars += n.Value;
+            }
+            return new string(vars.Distinct().ToArray());
+        }
+
         internal static string GetInfixString(List<Node> flatList)
         {
             infix = "";
@@ -163,7 +173,7 @@ namespace AleWk1
         //}
 
 
-        internal static void DisplayGraph(System.Windows.Controls.Image imgGraph)
+        internal static void DisplayGraph()
         {
             using (var p = new Process())
             {
