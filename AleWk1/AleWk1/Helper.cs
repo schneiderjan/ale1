@@ -117,21 +117,21 @@ namespace AleWk1
                 var dotPath = path + "\\dot.dot";
                 var imgPath = path + "\\dot.png";
 
-                //p.StartInfo.Verb = "runas";
+                p.StartInfo.Verb = "runas";
                 p.StartInfo.FileName = @"C:\Program Files (x86)\Graphviz2.38\bin\dot.exe";
                 p.StartInfo.Arguments = " -Tpng -odot.png " + dotPath;
                 p.Start();
                 p.WaitForExit();
+            }
 
+            using (var p = new Process())
+            {
+                var path = AppDomain.CurrentDomain.BaseDirectory;
+                var imgPath = path + "\\dot.png";
 
-                //var bitmap = new BitmapImage();
-                ////using (var stream = File.OpenRead(imgPath))
-                //using (var stream = )
-                //{
-                //    bitmap.StreamSource = stream;
-                //}
-                //imgGraph.Source = bitmap;
-                imgGraph.Source = new BitmapImage(new Uri(@imgPath));
+                p.StartInfo.FileName = @imgPath;
+                p.Start();
+
             }
         }
 
