@@ -22,6 +22,7 @@ namespace AleWk1
             };
 
         internal const string not = "~";
+        internal static string infix;
 
 
         internal static void WriteToFile(List<Node> flatList)
@@ -66,50 +67,103 @@ namespace AleWk1
 
         internal static string GetInfixString(List<Node> flatList)
         {
-            var infix = "";
-
-            //    public void InOrder(Node root, Node previous)
-            //{
-            //    if (root == null)
-            //    {
-            //        return;
-            //    }
-
-            //    if (previous != null && root.Right != null)
-            //    {
-            //        _infixNotation = _infixNotation + "( ";
-
-            //        InOrder(root.Left, root);
-
-            //        if (IsPredicate(root.Value))
-            //            _infixNotation = _infixNotation + LogicPredicate(root.Value);
-            //        else
-            //            _infixNotation = _infixNotation + root.Value;
-
-            //        InOrder(root.Right, root);
-
-            //        _infixNotation = _infixNotation + " )";
-            //    }
-            //    else
-            //    {
-            //        InOrder(root.Left, root);
-
-            //        if (IsPredicate(root.Value))
-            //            _infixNotation = _infixNotation + LogicPredicate(root.Value);
-            //        else
-            //            _infixNotation = _infixNotation + root.Value;
-
-            //        InOrder(root.Right, root);
-            //    }
-            //}
-
-
-
-
+            infix = "";
+            flatList.Reverse();
+            InOrder(flatList[0], null);
             return infix;
         }
+        private static void InOrder(Node rootNode, Node previousNode)
+        {
+            if (rootNode == null) return;
 
-        internal static async void DisplayGraph(System.Windows.Controls.Image imgGraph)
+            if (previousNode != null && rootNode.RightChild != null)
+            {
+                infix = infix + "( ";
+
+                InOrder(rootNode.LeftChild, rootNode);
+
+                if (IsOperator(rootNode.Value)) infix += GetAsciiReprentation(rootNode.Value);
+                else infix += rootNode.Value;
+
+                InOrder(rootNode.RightChild, rootNode);
+
+                infix = infix + " )";
+            }
+            else
+            {
+                InOrder(rootNode.LeftChild, rootNode);
+
+                if (IsOperator(rootNode.Value)) infix += GetAsciiReprentation(rootNode.Value);
+                else infix += rootNode.Value;
+
+                InOrder(rootNode.RightChild, rootNode);
+            }
+        }
+
+        private static string GetAsciiReprentation(string value)
+        {
+            var op = "";
+
+            switch (value)
+            {
+                case not:
+                    op = "¬";
+                    break;
+                case "&":
+                    op = "⋀";
+                    break;
+                case "|":
+                    op = "⋁";
+                    break;
+                case ">":
+                    op = "⇒";
+                    break;
+                case "=":
+                    op = "⇔";
+                    break;
+            }
+            return op;
+
+        }
+
+
+        //    public void InOrder(Node root, Node previous)
+        //{
+        //    if (root == null)
+        //    {
+        //        return;
+        //    }
+
+        //    if (previous != null && root.Right != null)
+        //    {
+        //        _infixNotation = _infixNotation + "( ";
+
+        //        InOrder(root.Left, root);
+
+        //        if (IsPredicate(root.Value))
+        //            _infixNotation = _infixNotation + LogicPredicate(root.Value);
+        //        else
+        //            _infixNotation = _infixNotation + root.Value;
+
+        //        InOrder(root.Right, root);
+
+        //        _infixNotation = _infixNotation + " )";
+        //    }
+        //    else
+        //    {
+        //        InOrder(root.Left, root);
+
+        //        if (IsPredicate(root.Value))
+        //            _infixNotation = _infixNotation + LogicPredicate(root.Value);
+        //        else
+        //            _infixNotation = _infixNotation + root.Value;
+
+        //        InOrder(root.Right, root);
+        //    }
+        //}
+
+
+        internal static void DisplayGraph(System.Windows.Controls.Image imgGraph)
         {
             using (var p = new Process())
             {
@@ -131,7 +185,6 @@ namespace AleWk1
 
                 p.StartInfo.FileName = @imgPath;
                 p.Start();
-
             }
         }
 
@@ -189,3 +242,4 @@ namespace AleWk1
         }
     }
 }
+

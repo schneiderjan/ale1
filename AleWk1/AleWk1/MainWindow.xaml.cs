@@ -14,8 +14,8 @@ namespace AleWk1
         public MainWindow()
         {
             InitializeComponent();
-            
-            
+
+
             tbPrefix.Text = "&(=(A,B),|(C,D))";
             //"=( >(A,B), |( ~(A) ,B) )
             //&(A, ~(B))
@@ -35,48 +35,15 @@ namespace AleWk1
             var prefixInput = Helper.ConvertStringToList(input);
             var reversedPrefixInput = Helper.ReverseList(prefixInput);
             ParseInfix(reversedPrefixInput);
-        }      
+        }
 
         private void ParseInfix(List<string> reversedPrefixInput)
         {
             var flatList = Helper.GetFlatList(reversedPrefixInput);
+            tbInfix.Text = Helper.GetInfixString(flatList);
 
             Helper.WriteToFile(flatList);
             Helper.DisplayGraph(imgGraph);
-            var infix = Helper.GetInfixString(flatList);
-
-            tbInfix.Text = infix;
-        }      
+        }
     }
 }
-
-////n is a child with right/left with a not as parent.
-//if (n.LeftChild == null 
-//    && n.RightChild == null
-//    && flatList[flatList.IndexOf(n) +1].LeftChild == null
-//    && flatList[flatList.IndexOf(n) + 1].RightChild == null)
-//{
-//    n.Parent = flatList[flatList.IndexOf(n) + 3];
-//}
-//else if (n.LeftChild == null
-//    && n.RightChild == null
-//    )
-//{
-//    n.Parent = flatList[flatList.IndexOf(n) + 1];
-//}
-////n must be a NOT operator if either one operand is null
-////and first condition is already true.
-//else if (n.LeftChild == null
-//    || n.RightChild == null
-//    && n.Value.Equals(not))
-//{
-//    n.Parent = flatList[flatList.IndexOf(n) + 1];
-//}
-//else if (operators.Contains(flatList[flatList.IndexOf(n) + 1].Value))
-//{
-//    n.Parent = flatList[flatList.IndexOf(n) + 1];
-//}
-//else if (operators.Contains(flatList[flatList.IndexOf(n)].Value))
-//{
-//    n.Parent = flatList[flatList.IndexOf(n) + 1];
-//}
