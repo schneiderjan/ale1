@@ -15,9 +15,6 @@ namespace AleWk1
         {
             InitializeComponent();
             tbPrefix.Text = "&(=(A,B),|(C,D))";
-            //"=( >(A,B), |( ~(A) ,B) )
-            //&(A, ~(B))
-            //&(=(A,B),|(C,D))
         }
 
         private void btnParse_Click(object sender, RoutedEventArgs e)
@@ -39,9 +36,10 @@ namespace AleWk1
             var flatList = Helper.GetFlatList(reversedPrefixInput);
             tbInfix.Text = Helper.GetInfixString(flatList);
 
+            tbValues.Text = Helper.GetDistinctVariables(flatList);
+
             Helper.WriteToFile(flatList);
             Helper.DisplayGraph();
-            tbValues.Text = Helper.GetDistinctVariables(flatList);
         }
     }
 }
