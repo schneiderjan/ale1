@@ -14,7 +14,8 @@ namespace AleWk1
         public MainWindow()
         {
             InitializeComponent();
-            tbPrefix.Text = "&(=(A,B),|(C,D))";
+            tbPrefix.Text = "&((|(A,~(B)),C)";
+                //"&(=(A,B),|(C,D))";
             //"=( >(A,B), |( ~(A) ,B) ) 
             //&(A, ~(B)) 
             //&(=(A,B),|(C,D)) 
@@ -32,18 +33,70 @@ namespace AleWk1
 
             var prefixInput = Helper.ConvertStringToList(input);
             var reversedPrefixInput = Helper.ReverseList(prefixInput);
+
+
             ParseInfix(reversedPrefixInput);
+
+          
+            ShowTable();
+
+            
+
+
         }
 
         private void ParseInfix(List<string> reversedPrefixInput)
         {
+
             var flatList = Helper.GetFlatList(reversedPrefixInput);
             tbInfix.Text = Helper.GetInfixString(flatList);
             
             tbValues.Text = Helper.GetDistinctVariables(flatList);
 
-            Helper.WriteToFile(flatList);
-            Helper.DisplayGraph();
+            //Helper.WriteToFile(flatList);
+            //Helper.DisplayGraph();
+          
+        }
+
+        private void ShowTable()
+        {
+           // Helper.Maketable(lvTruthTable)
+            var header = tbValues.Text[0].ToString();
+            for (var i = 1; i < tbValues.Text.Length; i++)
+            {
+                header = header + "     " + tbValues.Text[i];
+            }
+
+            header = header + "     " + tbInfix.Text;
+
+            lvTruthTable.Items.Add(header);
+
+            var hexadecimal = "";
+
+            var helper = new Helper();
+            var tableValues = helper.GenerateTable(tbPrefix.Text);
+
+            for (int i = 0; i < tableValues.Count; i = i + tbValues.Text.Length + 1)
+            {
+                var row = "";
+
+                row = tableValues[i];
+
+                for (int j = 1; j < tbValues.Text.Length + 1; j++)
+                {
+                    row = row + "     " + tableValues[i + j];
+
+                    if (j == tbValues.Text.Length)
+                        hexadecimal = hexadecimal + tableValues[i + j];
+
+                }
+
+                lvTruthTable.Items.Add(row);
+            }
+
+            
+
+            tbHash.Text = helper.HexaDecimal(hexadecimal);
         }
     }
 }

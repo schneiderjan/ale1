@@ -12,6 +12,8 @@ namespace AleWk1
         public Node RightChild { get; set; }
         public string Value { get; set; }
 
+        public bool BoolValue;
+
         public Node(string _val, Node _leftChild, Node _rightChild)
         {
             Value = _val;
