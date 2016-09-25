@@ -39,7 +39,7 @@ namespace AleWk1
         {
             var flatList = Helper.GetFlatList(reversedPrefixInput);
             tbInfix.Text = Helper.GetInfixString(flatList);
-
+            
             tbValues.Text = Helper.GetDistinctVariables(flatList);
 
             Helper.WriteToFile(flatList);

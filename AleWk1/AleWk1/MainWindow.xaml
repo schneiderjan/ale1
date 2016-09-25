@@ -5,12 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AleWk1"
         mc:Ignorable="d"
-        Title="MainWindow" Height="138" Width="525">
+        Title="MainWindow" Height="500" Width="525">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0" Margin="0,2,5,2">
@@ -46,6 +47,13 @@
             <Label Grid.Column="0" Content="Values" Width="50"></Label>
 
             <TextBox Name="tbValues" Grid.Column="1" Text=""></TextBox>
+        </Grid>
+
+        <Grid Grid.Row="3" Margin="0,2,5,2">
+            <ListView x:Name="lvTruthTable">
+                
+                
+            </ListView>
         </Grid>
 
 
