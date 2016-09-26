@@ -12,7 +12,7 @@ namespace AleWk1
     public class Helper
     {
         internal static int variableCount;
-        internal static List<Node> listwithallthenodes;
+        internal static List<Node> listWithAllTheNodes;
         internal static List<char> variables;
         internal static List<string> operators = new List<string>()
             {
@@ -72,10 +72,10 @@ namespace AleWk1
             string vars = "";
             foreach (var n in flatList)
             {
-                if (!IsOperator(n.Value) && !n.Value.Equals(not)) { vars += n.Value;}
+                if (!IsOperator(n.Value) && !n.Value.Equals(not)) { vars += n.Value; }
 
             }
-            var distinct=  new string(vars.Distinct().ToArray());
+            var distinct = new string(vars.Distinct().ToArray());
 
             for (int i = 0; i < distinct.Length; i++)
             {
@@ -90,7 +90,7 @@ namespace AleWk1
         {
             infix = "";
             flatList.Reverse();
-            listwithallthenodes = flatList;
+            listWithAllTheNodes = flatList;
             InOrder(flatList[0], null);
             return infix;
         }
@@ -183,7 +183,7 @@ namespace AleWk1
             {
                 chars.Add(c.ToString());
             }
-            
+
             return chars;
         }
 
@@ -235,34 +235,28 @@ namespace AleWk1
         }
 
 
-        public List<string> GenerateTable(string input)
+        internal static List<string> GenerateTable(string input)
         {
             var Variables = ConvertStringToCharList(input);
 
             var listString = ConvertStringToList(input);
 
-           // var _nodes = listwithallthenodes;
-            listwithallthenodes.Reverse();
+            // var _nodes = listwithallthenodes;
+            listWithAllTheNodes.Reverse();
             //var inputTable = GenerateTableInput(Varibles.Count);GetDistinctVariables
             var inputTable = GenerateTableInput(variableCount);
-            
+
             bool[] answer1 = new bool[inputTable.GetLength(0)];
-            bool[] answer2 = new bool[inputTable.GetLength(0)]; ;
             for (int i = 0; i < inputTable.GetLength(0); i++)
             {
                 for (int j = 0; j < inputTable.GetLength(1); j++)
                 {
                     SetValue(variables[j], inputTable[i, j]);
-                    SetValue(variables[j], inputTable[i, j]);
                 }
                 answer1[i] = Solve();
-                answer2[i] = Solve();
             }
 
-            bool equal = false;
-            equal = answer1.SequenceEqual(answer2);
 
-            //TruthTableView.Columns.Add("#1");
             //if (!equal) TruthTableView.Columns.Add("#2");
             var Values = new List<string>();
             for (int i = 0; i < inputTable.GetLength(0); i++)
@@ -273,23 +267,22 @@ namespace AleWk1
                     Values.Add(getBoolStr(inputTable[i, j]));
                 }
                 Values.Add(getBoolStr(answer1[i]));
-                if (!equal) Values.Add(getBoolStr(answer2[i])); ;
             }
 
             return Values;
         }
 
         // Get stirng from bool value
-        private string getBoolStr(bool b)
+        internal static string getBoolStr(bool b)
         {
             return b ? "1" : "0";
         }
 
-        private bool Solve()
+        internal static bool Solve()
         {
             Stack<bool> stack = new Stack<bool>();
-            
-            foreach (var t in listwithallthenodes)
+
+            foreach (var t in listWithAllTheNodes)
             {
                 if (!IsOperator(t.Value) && !t.Value.Equals(not))
                 {
@@ -332,11 +325,11 @@ namespace AleWk1
         }
 
         // set variable value, returns true if successfully changed
-        public bool SetValue(char c, bool val)
+        internal static bool SetValue(char c, bool val)
         {
             bool success = false;
             char ch = Char.ToUpper(c);
-            foreach (var t in listwithallthenodes)
+            foreach (var t in listWithAllTheNodes)
             {
                 if (t.Value == ch.ToString())
                 {
@@ -381,7 +374,7 @@ namespace AleWk1
         }
 
 
-        public string HexaDecimal(string bin)
+        internal static string HexaDecimal(string bin)
         {
             // //string bin = "10100010";
             //bin.Reverse();

@@ -15,7 +15,7 @@ namespace AleWk1
         {
             InitializeComponent();
             tbPrefix.Text = "&((|(A,~(B)),C)";
-                //"&(=(A,B),|(C,D))";
+            //"&(=(A,B),|(C,D))";
             //"=( >(A,B), |( ~(A) ,B) ) 
             //&(A, ~(B)) 
             //&(=(A,B),|(C,D)) 
@@ -34,33 +34,24 @@ namespace AleWk1
             var prefixInput = Helper.ConvertStringToList(input);
             var reversedPrefixInput = Helper.ReverseList(prefixInput);
 
-
             ParseInfix(reversedPrefixInput);
-
-          
             ShowTable();
-
-            
-
-
         }
 
         private void ParseInfix(List<string> reversedPrefixInput)
         {
-
             var flatList = Helper.GetFlatList(reversedPrefixInput);
             tbInfix.Text = Helper.GetInfixString(flatList);
-            
+
             tbValues.Text = Helper.GetDistinctVariables(flatList);
 
-            //Helper.WriteToFile(flatList);
-            //Helper.DisplayGraph();
-          
+            Helper.WriteToFile(flatList);
+            Helper.DisplayGraph();
         }
 
         private void ShowTable()
         {
-           // Helper.Maketable(lvTruthTable)
+            // Helper.Maketable(lvTruthTable)
             var header = tbValues.Text[0].ToString();
             for (var i = 1; i < tbValues.Text.Length; i++)
             {
@@ -73,8 +64,7 @@ namespace AleWk1
 
             var hexadecimal = "";
 
-            var helper = new Helper();
-            var tableValues = helper.GenerateTable(tbPrefix.Text);
+            var tableValues = Helper.GenerateTable(tbPrefix.Text);
 
             for (int i = 0; i < tableValues.Count; i = i + tbValues.Text.Length + 1)
             {
@@ -94,9 +84,9 @@ namespace AleWk1
                 lvTruthTable.Items.Add(row);
             }
 
-            
 
-            tbHash.Text = helper.HexaDecimal(hexadecimal);
+
+            tbHash.Text = Helper.HexaDecimal(hexadecimal);
         }
     }
 }
