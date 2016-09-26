@@ -15,10 +15,10 @@ namespace AleWk1
         {
             InitializeComponent();
             tbPrefix.Text = "&((|(A,~(B)),C)";
-            //"&(=(A,B),|(C,D))";
+            //"&(=(A,B),|(C,D))"
             //"=( >(A,B), |( ~(A) ,B) ) 
-            //&(A, ~(B)) 
-            //&(=(A,B),|(C,D)) 
+            //&(A, ~(B))
+            //&(=(A,B),|(C,D))
             btnParse.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         }
 
