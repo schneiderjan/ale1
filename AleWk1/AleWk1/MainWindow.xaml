@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AleWk1"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="525">
+        Title="MainWindow" Height="500" Width="825">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <Grid>
             <Grid.RowDefinitions>
@@ -61,9 +61,12 @@
             </Grid>
 
             <Grid Grid.Row="4" Margin="5,2,5,2">
-                <ListView x:Name="lvTruthTable">
-
-                </ListView>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <ListView Grid.Column="0" x:Name="lvTruthTable"/>
+                <ListView Grid.Column="1" x:Name="lvSimplifiedTruthTable"/>
             </Grid>
 
 

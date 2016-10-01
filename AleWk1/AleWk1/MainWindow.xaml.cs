@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
 namespace AleWk1
@@ -14,11 +15,13 @@ namespace AleWk1
         public MainWindow()
         {
             InitializeComponent();
-            tbPrefix.Text = "&((|(A,~(B)),C)";
+            tbPrefix.Text = "|(a,b)";
             //"&(=(A,B),|(C,D))"
+            //"&((|(A,~(B)),C)"
             //"=( >(A,B), |( ~(A) ,B) ) 
             //&(A, ~(B))
             //&(=(A,B),|(C,D))
+            //~(&(~(&(A,C)),~(&(~(B),C))))
             btnParse.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         }
 
@@ -29,14 +32,16 @@ namespace AleWk1
                 .Replace("(", "")
                 .Replace(")", "")
                 .Replace(@" ", "")
-                .Trim();
+                .Trim().ToUpper();
 
             var prefixInput = Helper.ConvertStringToList(input);
             var reversedPrefixInput = Helper.ReverseList(prefixInput);
 
             ParseInfix(reversedPrefixInput);
             ShowTable();
+            ShowSimplifiedTruthTable();
         }
+
 
         private void ParseInfix(List<string> reversedPrefixInput)
         {
@@ -51,6 +56,7 @@ namespace AleWk1
 
         private void ShowTable()
         {
+            lvTruthTable.Items.Clear();
             // Helper.Maketable(lvTruthTable)
             var header = tbValues.Text[0].ToString();
             for (var i = 1; i < tbValues.Text.Length; i++)
@@ -78,15 +84,16 @@ namespace AleWk1
 
                     if (j == tbValues.Text.Length)
                         hexadecimal = hexadecimal + tableValues[i + j];
-
                 }
 
                 lvTruthTable.Items.Add(row);
             }
 
-
-
             tbHash.Text = Helper.HexaDecimal(hexadecimal);
+        }
+        private void ShowSimplifiedTruthTable()
+        {
+            var tableValues = Helper.GenerateTableSimplified();
         }
     }
 }

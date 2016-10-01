@@ -11,6 +11,8 @@ namespace AleWk1
 {
     public class Helper
     {
+        internal static bool[,] tableVals;
+        internal static bool[] answer;
         internal static int variableCount;
         internal static List<Node> listWithAllTheNodes;
         internal static List<char> variables;
@@ -84,6 +86,34 @@ namespace AleWk1
 
             variableCount = distinct.Length;
             return distinct;
+        }
+
+        internal static List<string> GenerateTableSimplified()
+        {
+
+            //List<int> indeces = new List<int>();
+            //for (int j = 0; j < tableVals.GetLength(0); j++)
+            //{
+            //    if (answer[j] == true)
+            //    {
+            //        indeces.Add(j);
+            //    }
+            //}
+
+            var ads = tableVals.GetLength(0);
+            var asd = tableVals.GetLength(1);
+            for (int i = 0; i < tableVals.GetLength(0); i++)
+            {
+                for (int j = 0; j < variableCount; j++)
+                {
+                    if (answer[i] == true)
+                    {
+                         var hh= tableVals.GetLength(1);
+                    }
+                }
+            }
+
+            return new List<string>();
         }
 
         internal static string GetInfixString(List<Node> flatList)
@@ -255,7 +285,7 @@ namespace AleWk1
                 }
                 answer1[i] = Solve();
             }
-
+            answer = answer1;
 
             //if (!equal) TruthTableView.Columns.Add("#2");
             var Values = new List<string>();
@@ -369,7 +399,7 @@ namespace AleWk1
                     }
                 }
             }
-
+            tableVals = table;
             return table;
         }
 
