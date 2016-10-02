@@ -15,7 +15,7 @@ namespace AleWk1
         public MainWindow()
         {
             InitializeComponent();
-            tbPrefix.Text = "|(a,b)";
+            tbPrefix.Text = "&((|(A,~(B)),C)";
             //"&(=(A,B),|(C,D))"
             //"&((|(A,~(B)),C)"
             //"=( >(A,B), |( ~(A) ,B) ) 

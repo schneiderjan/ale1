@@ -91,28 +91,43 @@ namespace AleWk1
         internal static List<string> GenerateTableSimplified()
         {
 
-            //List<int> indeces = new List<int>();
-            //for (int j = 0; j < tableVals.GetLength(0); j++)
-            //{
-            //    if (answer[j] == true)
-            //    {
-            //        indeces.Add(j);
-            //    }
-            //}
-
-            var ads = tableVals.GetLength(0);
-            var asd = tableVals.GetLength(1);
-            for (int i = 0; i < tableVals.GetLength(0); i++)
+            List<int> indeces = new List<int>();
+            for (int j = 0; j < tableVals.GetLength(0); j++)
             {
-                for (int j = 0; j < variableCount; j++)
+                if (answer[j] == true)
                 {
-                    if (answer[i] == true)
-                    {
-                         var hh= tableVals.GetLength(1);
-                    }
+                    indeces.Add(j);
                 }
             }
 
+            int nextTrueItem = indeces.First();
+
+            if (indeces.Count > 2)
+            {
+
+
+                for (int i = 0; i < variableCount; i++) //Columns i
+                {
+                    Debug.WriteLine("i: " + i);
+                    for (int j = 0; j < tableVals.GetLength(0); j++) //Rows j
+                    {
+                        for (int k = 0; k < tableVals.GetLength(0); k++)
+                        {
+
+                            Debug.WriteLine("j: " + j);
+                            if (indeces.Contains(i) && nextTrueItem == i)
+                            {
+                                if (indeces.Contains(i + 1))
+                                {
+                                    nextTrueItem = indeces[i + 1];
+
+                                }
+                                Debug.WriteLine("IT IS IN");
+                            }
+                        }
+                    }
+                }
+            }
             return new List<string>();
         }
 
