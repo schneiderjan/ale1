@@ -78,6 +78,7 @@ namespace AleWk1
 
             }
             var distinct = new string(vars.Distinct().ToArray());
+            distinct = Alphabetize(distinct);
 
             for (int i = 0; i < distinct.Length; i++)
             {
@@ -86,6 +87,12 @@ namespace AleWk1
 
             variableCount = distinct.Length;
             return distinct;
+        }
+        internal static string Alphabetize(string s)
+        {
+            char[] a = s.ToCharArray();
+            Array.Sort(a);
+            return new string(a);
         }
 
         internal static List<string> GenerateTableSimplified()
