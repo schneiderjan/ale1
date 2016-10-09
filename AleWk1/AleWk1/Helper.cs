@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -63,8 +64,9 @@ namespace AleWk1
             {
                 foreach (var line in txtFileLines)
                 {
-                    sw.WriteLineAsync(line);
+                    sw.WriteLine(line);
                 }
+                sw.Dispose();
             }
         }
 
@@ -95,47 +97,64 @@ namespace AleWk1
             return new string(a);
         }
 
-        internal static List<string> GenerateTableSimplified()
+        internal static List<string> GenerateTableSimplified(ListView lvTruthTable)
         {
+            List<string> rows = new List<string>();
+            List<string> truthRows = new List<string>();
+            List<string> result = new List<string>();
 
-            List<int> indeces = new List<int>();
-            for (int j = 0; j < tableVals.GetLength(0); j++)
+            foreach (var str in lvTruthTable.Items)
             {
-                if (answer[j] == true)
-                {
-                    indeces.Add(j);
-                }
+                var x = Regex.Replace(str.ToString(), @"\s+", "");
+                rows.Add(x);
             }
 
-            int nextTrueItem = indeces.First();
-
-            if (indeces.Count > 2)
+            for (int i = 1; i < rows.Count; i++)
             {
+                if (rows[i][variableCount] == '1') truthRows.Add(rows[i]);
+            }
 
-
+            if (truthRows.Count > 2)
+            {
                 for (int i = 0; i < variableCount; i++) //Columns i
                 {
-                    Debug.WriteLine("i: " + i);
-                    for (int j = 0; j < tableVals.GetLength(0); j++) //Rows j
+                    for (int j = 1; j < truthRows.Count; j++) //Rows j
                     {
-                        for (int k = 0; k < tableVals.GetLength(0); k++)
+                        int simplifiable = 0;
+
+                        for (int k = 1; k < truthRows.Count; k++)
                         {
+                            if (truthRows[j][variableCount] == truthRows[k][variableCount]
+                                && truthRows[j][variableCount] == '1'
+                                && truthRows[j][i] == truthRows[k][i]) simplifiable++;
+                        }
 
-                            Debug.WriteLine("j: " + j);
-                            if (indeces.Contains(i) && nextTrueItem == i)
+                        if (simplifiable > 1)
+                        {
+                            string leftside = "", rightside = "";
+
+                            for (int t = 0; t < i; t++) leftside += "*\t";
+                            for (int t = i + 1; t < variableCount; t++) rightside += "*\t";
+
+
+                            result.Add(leftside + truthRows[j][i] + "\t" + rightside + "1");
+                        }
+                        else
+                        {
+                            if ( truthRows[j][variableCount] != '1')
                             {
-                                if (indeces.Contains(i + 1))
-                                {
-                                    nextTrueItem = indeces[i + 1];
-
-                                }
-                                Debug.WriteLine("IT IS IN");
+                                string simplified = "";
+                                for (int t = 0; t < truthRows.Count; t++) simplified += truthRows[j][t] + "\t";
+                                result.Add(simplified);
                             }
                         }
                     }
                 }
+
             }
-            return new List<string>();
+            result = result.Distinct().ToList();
+            result.Insert(0, lvTruthTable.Items[0].ToString());
+            return result;
         }
 
         internal static string GetInfixString(List<Node> flatList)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -15,7 +16,8 @@ namespace AleWk1
         public MainWindow()
         {
             InitializeComponent();
-            tbPrefix.Text = " | (  > ( E , ~  = ( E ,  | (  | ( E , B )  ,  > ( C , E )  )  )  )  , C )";
+            tbPrefix.Text = "&(=(A,B),|(C,D))";
+            //&(|(A,B),>(C,~(&(|(D,E),>(&(|(F,G),>(H,~(&(|(I,J),>(K,~(L)))))),~(M))))))
             //"&(=(A,B),|(C,D))"
             //"&((|(A,~(B)),C)"
             //"=( >(A,B), |( ~(A) ,B) ) 
@@ -45,6 +47,7 @@ namespace AleWk1
 
         private void ParseInfix(List<string> reversedPrefixInput)
         {
+
             var flatList = Helper.GetFlatList(reversedPrefixInput);
             tbInfix.Text = Helper.GetInfixString(flatList);
 
@@ -56,6 +59,7 @@ namespace AleWk1
 
         private void ShowTable()
         {
+
             lvTruthTable.Items.Clear();
             // Helper.Maketable(lvTruthTable)
             var header = tbValues.Text[0].ToString();
@@ -90,10 +94,16 @@ namespace AleWk1
             }
 
             tbHash.Text = Helper.HexaDecimal(hexadecimal);
+
         }
         private void ShowSimplifiedTruthTable()
         {
-            var tableValues = Helper.GenerateTableSimplified();
+            var tableValues = Helper.GenerateTableSimplified(lvTruthTable);
+            lvSimplifiedTruthTable.Items.Clear();
+            foreach (var x in tableValues)
+            {
+                lvSimplifiedTruthTable.Items.Add(x);
+            }
         }
     }
 }
