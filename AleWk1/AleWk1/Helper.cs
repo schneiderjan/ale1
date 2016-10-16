@@ -136,12 +136,19 @@ namespace AleWk1
                             for (int t = 0; t < i; t++) leftside += "*\t";
                             for (int t = i + 1; t < variableCount; t++) rightside += "*\t";
 
-
+                            string tautology = "";
+                            if (truthRows[j][i] == '1')
+                            {
+                                tautology = leftside + "0\t" + rightside + "1";
+                                if (result.Contains(tautology)) result.Remove(tautology);
+                            }
+                            else tautology = leftside + "1\t" + rightside + "1";
+                         
                             result.Add(leftside + truthRows[j][i] + "\t" + rightside + "1");
                         }
                         else
                         {
-                            if ( truthRows[j][variableCount] != '1')
+                            if (truthRows[j][variableCount] != '1')
                             {
                                 string simplified = "";
                                 for (int t = 0; t < truthRows.Count; t++) simplified += truthRows[j][t] + "\t";
