@@ -14,6 +14,7 @@ namespace AleWk1
     {
         internal static bool[,] tableVals;
         internal static bool[] answer;
+        internal static List<string> simplifiedTable;
         internal static int variableCount;
         internal static List<Node> listWithAllTheNodes;
         internal static List<char> variables;
@@ -161,6 +162,7 @@ namespace AleWk1
             }
             result = result.Distinct().ToList();
             result.Insert(0, lvTruthTable.Items[0].ToString());
+            simplifiedTable = result;
             return result;
         }
 
