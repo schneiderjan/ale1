@@ -12,12 +12,14 @@ namespace AleWk1
 {
     public class Helper
     {
+
+
         internal static bool[,] tableVals;
         internal static bool[] answer;
         internal static List<string> simplifiedTable;
         internal static int variableCount;
         internal static List<Node> listWithAllTheNodes;
-        internal static List<char> variables;
+        internal static List<char> variables = new List<char>();
         internal static List<string> operators = new List<string>()
             {
                 "&",
@@ -28,7 +30,7 @@ namespace AleWk1
 
         internal const string not = "~";
         internal static string infix;
-
+        internal static List<string> truthTable;
 
         internal static void WriteToFile(List<Node> flatList)
         {
@@ -73,7 +75,6 @@ namespace AleWk1
 
         internal static string GetDistinctVariables(List<Node> flatList)
         {
-            variables = new List<char>();
             string vars = "";
             foreach (var n in flatList)
             {
@@ -83,6 +84,7 @@ namespace AleWk1
             var distinct = new string(vars.Distinct().ToArray());
             distinct = Alphabetize(distinct);
 
+            variables.Clear();
             for (int i = 0; i < distinct.Length; i++)
             {
                 variables.Add(distinct[i]);
@@ -109,6 +111,8 @@ namespace AleWk1
                 var x = Regex.Replace(str.ToString(), @"\s+", "");
                 rows.Add(x);
             }
+
+            truthTable = rows;
 
             for (int i = 1; i < rows.Count; i++)
             {
@@ -144,7 +148,7 @@ namespace AleWk1
                                 if (result.Contains(tautology)) result.Remove(tautology);
                             }
                             else tautology = leftside + "1\t" + rightside + "1";
-                         
+
                             result.Add(leftside + truthRows[j][i] + "\t" + rightside + "1");
                         }
                         else
@@ -164,6 +168,34 @@ namespace AleWk1
             result.Insert(0, lvTruthTable.Items[0].ToString());
             simplifiedTable = result;
             return result;
+        }
+
+        internal static string GetDisjunctiveNormalForm(ListView lvTruthTable)
+        {
+            List<string> truthRows = new List<string>();
+            List<string> rows = new List<string>();
+            List<string> result = new List<string>();
+
+            foreach (var str in lvTruthTable.Items)
+            {
+                var x = Regex.Replace(str.ToString(), @"\s+", "");
+                rows.Add(x);
+            }
+            for (int i = 1; i < rows.Count; i++)
+            {
+                if (rows[i][variableCount] == '1') truthRows.Add(rows[i]);
+            }
+
+            string leftSide = "", rightSide = "";
+            for (int i = 0; i < variableCount; i++) //Columns i
+            {
+                for (int j = 1; j < truthRows.Count; j++) //Rows j
+                {
+                    if (rows[i] != null && rows[i][0] == '0') leftSide = "~(" + variables[0] + ")";
+                }
+            }
+
+            return "";
         }
 
         internal static string GetInfixString(List<Node> flatList)

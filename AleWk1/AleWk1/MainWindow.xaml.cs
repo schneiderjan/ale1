@@ -42,6 +42,7 @@ namespace AleWk1
             ParseInfix(reversedPrefixInput);
             ShowTable();
             ShowSimplifiedTruthTable();
+            ShowDisjunctiveNormalForm();
         }
 
 
@@ -104,6 +105,11 @@ namespace AleWk1
             {
                 lvSimplifiedTruthTable.Items.Add(x);
             }
+        }
+        private void ShowDisjunctiveNormalForm()
+        {
+            string dj = Helper.GetDisjunctiveNormalForm(lvTruthTable);
+            tbDisjunctiveNormalForm.Text = dj;
         }
     }
 }
