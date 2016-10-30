@@ -123,15 +123,15 @@ namespace AleWk1
             {
                 for (int i = 0; i < variableCount; i++) //Columns i
                 {
-                    for (int j = 1; j < truthRows.Count; j++) //Rows j
+                    for (int j = 1; j < rows.Count; j++) //Rows j
                     {
                         int simplifiable = 0;
 
-                        for (int k = 1; k < truthRows.Count; k++)
+                        for (int k = 1; k < rows.Count; k++)
                         {
-                            if (truthRows[j][variableCount] == truthRows[k][variableCount]
-                                && truthRows[j][variableCount] == '1'
-                                && truthRows[j][i] == truthRows[k][i]) simplifiable++;
+                            if (rows[j][variableCount] == rows[k][variableCount]
+                                && rows[j][variableCount] == '1'
+                                && rows[j][i] == rows[k][i]) simplifiable++;
                         }
 
                         if (simplifiable > 1)
@@ -142,21 +142,21 @@ namespace AleWk1
                             for (int t = i + 1; t < variableCount; t++) rightside += "*\t";
 
                             string tautology = "";
-                            if (truthRows[j][i] == '1')
+                            if (rows[j][i] == '1')
                             {
                                 tautology = leftside + "0\t" + rightside + "1";
                                 if (result.Contains(tautology)) result.Remove(tautology);
                             }
                             else tautology = leftside + "1\t" + rightside + "1";
 
-                            result.Add(leftside + truthRows[j][i] + "\t" + rightside + "1");
+                            result.Add(leftside + rows[j][i] + "\t" + rightside + "1");
                         }
                         else
                         {
-                            if (truthRows[j][variableCount] != '1')
+                            if (rows[j][variableCount] != '1')
                             {
                                 string simplified = "";
-                                for (int t = 0; t < truthRows.Count; t++) simplified += truthRows[j][t] + "\t";
+                                for (int t = 0; t < rows[j].Length; t++) simplified += rows[j][t] + "\t";
                                 result.Add(simplified);
                             }
                         }
@@ -164,11 +164,24 @@ namespace AleWk1
                 }
 
             }
+            else
+            {
+                for (int i = 1; i < rows.Count; i++)
+                {
+                    var simplifedrow = "";
+                    for (int j = 0; j < rows[i].Length; j++)
+                    {
+                        simplifedrow = simplifedrow + rows[i][j] + "\t";
+                    }
+                    result.Add(simplifedrow);
+                }
+            }
             result = result.Distinct().ToList();
             result.Insert(0, lvTruthTable.Items[0].ToString());
             simplifiedTable = result;
             return result;
         }
+
 
         internal static string GetDisjunctiveNormalForm(ListView lvTruthTable)
         {
@@ -242,6 +255,99 @@ namespace AleWk1
                 disjunctiveNormalForm = leftAndOp;
             }
 
+            return disjunctiveNormalForm;
+        }
+        internal static string GetDisjunctiveNormalFormSimplified(ListView lvSimplifiedTruthTable)
+        {
+            List<string> truthRows = new List<string>();
+            List<string> rows = new List<string>();
+            List<string> result = new List<string>();
+            string disjunctiveNormalForm = "";
+            string leftAndOp = "";
+            string rightAndOp = "";
+            int index = 0;
+
+            foreach (var str in lvSimplifiedTruthTable.Items)
+            {
+                var x = Regex.Replace(str.ToString(), @"\s+", "");
+                rows.Add(x);
+            }
+            for (int i = 1; i < rows.Count; i++)
+            {
+                if (rows[i][variableCount] == '1') truthRows.Add(rows[i]);
+            }
+
+            string leftSide = "", rightSide = "";
+            for (int i = 1; i < rows.Count; i++) //Columns i
+            {
+                if (rows[i][rows[i].Length - 1] == '1')
+                {
+                    index = i;
+                    if (rows[i][0] != '*')
+                    {
+                        if (rows[i] != null && rows[i][0] == '0') leftSide = "~(" + variables[0] + ")";
+                        else leftSide = variables[0].ToString();
+                    }
+
+                    for (int j = 1; j < variableCount; j++) //Rows j
+                    {
+                        if (rows[i][j] != '*')
+                        {
+                            if (rows[i][j] == '0') rightSide = "~(" + variables[j] + ")";
+                            else rightSide = variables[j].ToString();
+
+
+                            leftAndOp = "&(" + leftSide + "," + rightSide + ")";
+
+                            if (variableCount > 0) leftSide = leftAndOp;
+                        }
+                        else leftAndOp = leftSide;
+                    }
+                    break;
+                }
+            }
+
+            if (truthRows.Count > 0)
+            { 
+                for (int i = index + 1; i < rows.Count; i++)
+                {
+                    if (rows[i][rows[i].Length - 1] == '1')
+                    {
+                        if (rows[i][0] != '*')
+                        {
+                            if (rows[i][0] == '0') leftSide = "~(" + variables[0] + ")";
+                            else leftSide = variables[0].ToString();
+                        }
+                        else leftSide = "";
+
+                        for (int j = 1; j < variableCount; j++)
+                        {
+                            // per variable
+                            if (rows[i][j] != '*')
+                            {
+                                if (rows[i][j] == '0') rightSide = "~(" + variables[j] + ")";
+                                else rightSide = variables[j].ToString();
+
+                                if (leftSide == "")
+                                {
+                                    leftSide = rightSide;
+                                    rightAndOp = rightSide;
+                                }
+                                else rightAndOp = "&(" + leftSide + "," + rightSide + ")";
+
+                                if (variables.Count > 0) leftSide = rightAndOp;
+                            }
+                            else rightAndOp = leftSide;
+                        }
+                        disjunctiveNormalForm = "|(" + leftAndOp + "," + rightAndOp + ")";
+                        leftAndOp = disjunctiveNormalForm;
+                    }
+                }
+            }
+            else
+            {
+                disjunctiveNormalForm = leftAndOp;
+            }
 
             return disjunctiveNormalForm;
         }
