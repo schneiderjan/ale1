@@ -175,6 +175,10 @@ namespace AleWk1
             List<string> truthRows = new List<string>();
             List<string> rows = new List<string>();
             List<string> result = new List<string>();
+            string disjunctiveNormalForm = "";
+            string leftAndOp = "";
+            string rightAndOp = "";
+            int index = 0;
 
             foreach (var str in lvTruthTable.Items)
             {
@@ -187,15 +191,59 @@ namespace AleWk1
             }
 
             string leftSide = "", rightSide = "";
-            for (int i = 0; i < variableCount; i++) //Columns i
+            for (int i = 1; i < rows.Count; i++) //Columns i
             {
-                for (int j = 1; j < truthRows.Count; j++) //Rows j
+                if (rows[i][rows[i].Length - 1] == '1')
                 {
+                    index = i;
                     if (rows[i] != null && rows[i][0] == '0') leftSide = "~(" + variables[0] + ")";
+                    else leftSide = variables[0].ToString();
+
+                    for (int j = 1; j < variableCount; j++) //Rows j
+                    {
+                        if (rows[i][j] == '0') rightSide = "~(" + variables[j] + ")";
+                        else rightSide = variables[j].ToString();
+
+                        leftAndOp = "&(" + leftSide + "," + rightSide + ")";
+
+                        if (variableCount > 2) leftSide = leftAndOp;
+                    }
+                    break;
                 }
             }
 
-            return "";
+            if (truthRows.Count > 2)
+            {
+                for (int i = index + 1; i < rows.Count; i++)
+                {
+                    if (rows[i][rows[i].Length - 1] == '1')
+                    {
+                        if (rows[i][0] == '0') leftSide = "~(" + variables[0] + ")";
+                        else leftSide = variables[0].ToString();
+
+                        for (int j = 1; j < variableCount; j++)
+                        {
+                            // per variable
+
+                            if (rows[i][j] == '0') rightSide = "~(" + variables[j] + ")";
+                            else rightSide = variables[j].ToString();
+
+                            rightAndOp = "&(" + leftSide + "," + rightSide + ")";
+
+                            if (variables.Count > 0) leftSide = rightAndOp;
+                        }
+                        disjunctiveNormalForm = "|(" + leftAndOp + "," + rightAndOp + ")";
+                        leftAndOp = disjunctiveNormalForm;
+                    }
+                }
+            }
+            else
+            {
+                disjunctiveNormalForm = leftAndOp;
+            }
+
+
+            return disjunctiveNormalForm;
         }
 
         internal static string GetInfixString(List<Node> flatList)

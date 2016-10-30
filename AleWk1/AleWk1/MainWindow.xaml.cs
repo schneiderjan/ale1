@@ -16,7 +16,7 @@ namespace AleWk1
         public MainWindow()
         {
             InitializeComponent();
-            tbPrefix.Text = "&(=(A,B),|(C,D))";
+            tbPrefix.Text = ">(A, (B))";
             //&(|(A,B),>(C,~(&(|(D,E),>(&(|(F,G),>(H,~(&(|(I,J),>(K,~(L)))))),~(M))))))
             //"&(=(A,B),|(C,D))"
             //"&((|(A,~(B)),C)"
@@ -101,9 +101,19 @@ namespace AleWk1
         {
             var tableValues = Helper.GenerateTableSimplified(lvTruthTable);
             lvSimplifiedTruthTable.Items.Clear();
-            foreach (var x in tableValues)
+            if (tableValues.Count == 1)
             {
-                lvSimplifiedTruthTable.Items.Add(x);
+                foreach (var x in lvTruthTable.Items)
+                {
+                    lvSimplifiedTruthTable.Items.Add(x);
+                }
+            }
+            else
+            {
+                foreach (var x in tableValues)
+                {
+                    lvSimplifiedTruthTable.Items.Add(x);
+                }
             }
         }
         private void ShowDisjunctiveNormalForm()
