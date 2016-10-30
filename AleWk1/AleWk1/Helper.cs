@@ -26,11 +26,14 @@ namespace AleWk1
                 "|",
                 ">",
                 "=",
+                "%"
             };
 
         internal const string not = "~";
         internal static string infix;
         internal static List<string> truthTable;
+        private static string dj;
+        private static string djSimplified;
 
         internal static void WriteToFile(List<Node> flatList)
         {
@@ -182,6 +185,174 @@ namespace AleWk1
             return result;
         }
 
+        internal static string GetNand(string input)
+        {
+
+            string nandexpression = "";
+            var left = "";
+            var leftnandexpression = "";
+            var rightnandexpression = "";
+            var exp = "";
+            var leftexp = "";
+
+            Stack<Node> stack = new Stack<Node>();
+
+            if (input.Contains("%")) return input;
+
+            if (input.Length < 100)
+
+            {
+                foreach (var t in listWithAllTheNodes)
+                {
+                    if (IsOperator(t.Value) == false)
+                    {
+                        stack.Push(t);
+                    }
+                    else
+                    {
+                        switch (t.Value)
+                        {
+                            case "|":
+                                if (stack.Count != 0)
+                                    leftnandexpression = stack.Pop().Value;
+
+                                if (left == "")
+                                {
+                                    if (stack.Count > 0) rightnandexpression = stack.Pop().Value;
+                                    nandexpression = nandexpression + "%(%(" + leftnandexpression + "," +
+                                                     leftnandexpression + "),%(" + rightnandexpression + "," +
+                                                     rightnandexpression + "))";
+                                    left = nandexpression;
+                                    leftexp = "%(%(" + leftnandexpression + "," + leftnandexpression + "),%(" +
+                                              rightnandexpression + "," + rightnandexpression + "))";
+                                }
+                                else
+                                {
+                                    exp = "%(%(" + leftexp + "," + leftexp + "),%(" + leftnandexpression + "," +
+                                          leftnandexpression + "))";
+                                    nandexpression = exp;
+                                    leftexp = nandexpression;
+                                }
+                                break;
+                            case "=": //bu implication
+                                if (stack.Count != 0)
+                                    leftnandexpression = stack.Pop().Value;
+
+                                if (left == "" && leftexp == "")
+                                {
+                                    if (stack.Count > 0)
+                                        rightnandexpression = stack.Pop().Value;
+                                    nandexpression = nandexpression + "%(%(%(" + leftnandexpression + "," +
+                                                     leftnandexpression + "),%(" + rightnandexpression + "," +
+                                                     rightnandexpression + ")),%(" + leftnandexpression + "," +
+                                                     rightnandexpression + "))";
+                                    left = nandexpression;
+                                    leftexp = "%(%(%(" + leftnandexpression + "," + leftnandexpression + "),%(" +
+                                              rightnandexpression + "," + rightnandexpression + ")),%(" +
+                                              leftnandexpression + "," + rightnandexpression + "))";
+                                }
+                                else
+                                {
+                                    exp = "%(%(%(" + leftexp + "," + leftexp + "),%(" + leftnandexpression + "," +
+                                          leftnandexpression + ")),%(" + leftexp + "," + leftnandexpression + "))";
+                                    nandexpression = exp;
+                                    leftexp = nandexpression;
+                                }
+                                break;
+                            case ">": //implication
+                                if (stack.Count != 0)
+                                    leftnandexpression = stack.Pop().Value;
+
+                                if (left == "" && leftexp == "")
+                                {
+                                    if (stack.Count > 0) rightnandexpression = stack.Pop().Value;
+                                    nandexpression = nandexpression + "%(" + leftnandexpression + ",%(" +
+                                                     rightnandexpression + "," + rightnandexpression + "))";
+                                    left = nandexpression;
+                                    leftexp = "%(" + leftnandexpression + ",%(" + rightnandexpression + "," +
+                                              rightnandexpression + "))";
+                                }
+                                else
+                                {
+                                    exp = "%(" + leftexp + ",%(" + leftnandexpression + "," + leftnandexpression + "))";
+                                    nandexpression = exp;
+                                    leftexp = nandexpression;
+                                }
+                                break;
+                            case "&": //and
+                                if (stack.Count != 0)
+                                    leftnandexpression = stack.Pop().Value;
+
+                                if (left == "" && leftexp == "")
+                                {
+                                    if (stack.Count > 0) rightnandexpression = stack.Pop().Value;
+                                    nandexpression = nandexpression + "%(%(" + leftnandexpression + "," +
+                                                     rightnandexpression + "),%(" + leftnandexpression + "," +
+                                                     rightnandexpression + "))";
+                                    left = nandexpression;
+                                    leftexp = "%(%(" + leftnandexpression + "," + rightnandexpression + "),%(" +
+                                              leftnandexpression + "," + rightnandexpression + "))";
+                                }
+                                else
+                                {
+                                    try
+                                    {
+                                        exp = "%(%(" + leftexp + "," + leftnandexpression + "),%(" + leftexp + "," +
+                                              leftnandexpression + "))";
+                                        nandexpression = exp;
+                                        leftexp = nandexpression;
+                                    }
+                                    catch (OutOfMemoryException)
+                                    {
+                                        Debug.WriteLine("Too loooooooooong NAND");
+                                    }
+                                }
+                                break;
+                            case "~": //not
+                                if (stack.Count != 0)
+                                    leftnandexpression = stack.Pop().Value;
+
+                                if (left == "" && leftexp == "")
+                                {
+                                    nandexpression = nandexpression + "%(" + leftnandexpression + "," +
+                                                     leftnandexpression + ")";
+                                    left = nandexpression;
+                                    leftexp = "%(" + leftnandexpression + "," + leftnandexpression + ")";
+                                }
+                                else
+                                {
+                                    try
+                                    {
+                                        exp = "%(" + leftexp + "," + leftexp + ")";
+                                    }
+                                    catch (OutOfMemoryException)
+                                    {
+                                        exp = "";
+                                        Debug.WriteLine("Too looooooooong NAND");
+                                    }
+                                    finally
+                                    {
+                                        nandexpression = exp;
+                                        leftexp = nandexpression;
+                                    }
+                                }
+
+
+                                break;
+                            case "%":
+                                break;
+
+                            default:
+                                throw new Exception("Error: Invalid operation!!");
+                        }
+                    }
+                }
+            }
+
+            var result = nandexpression == "" ? input : nandexpression;
+
+            return result;
+        }
 
         internal static string GetDisjunctiveNormalForm(ListView lvTruthTable)
         {
@@ -255,6 +426,7 @@ namespace AleWk1
                 disjunctiveNormalForm = leftAndOp;
             }
 
+            dj = disjunctiveNormalForm;
             return disjunctiveNormalForm;
         }
         internal static string GetDisjunctiveNormalFormSimplified(ListView lvSimplifiedTruthTable)
@@ -262,7 +434,7 @@ namespace AleWk1
             List<string> truthRows = new List<string>();
             List<string> rows = new List<string>();
             List<string> result = new List<string>();
-            string disjunctiveNormalForm = "";
+            string disjunctiveNormalFormSimplified = "";
             string leftAndOp = "";
             string rightAndOp = "";
             int index = 0;
@@ -339,17 +511,18 @@ namespace AleWk1
                             }
                             else rightAndOp = leftSide;
                         }
-                        disjunctiveNormalForm = "|(" + leftAndOp + "," + rightAndOp + ")";
-                        leftAndOp = disjunctiveNormalForm;
+                        disjunctiveNormalFormSimplified = "|(" + leftAndOp + "," + rightAndOp + ")";
+                        leftAndOp = disjunctiveNormalFormSimplified;
                     }
                 }
             }
             else
             {
-                disjunctiveNormalForm = leftAndOp;
+                disjunctiveNormalFormSimplified = leftAndOp;
             }
 
-            return disjunctiveNormalForm;
+            djSimplified = disjunctiveNormalFormSimplified;
+            return disjunctiveNormalFormSimplified;
         }
 
         internal static string GetInfixString(List<Node> flatList)
@@ -408,6 +581,9 @@ namespace AleWk1
                     break;
                 case "=":
                     op = "⇔";
+                    break;
+                case "%":
+                    op = "%";
                     break;
             }
             return op;
@@ -578,6 +754,9 @@ namespace AleWk1
                             break;
                         case "~"://not
                             stack.Push(!stack.Pop());
+                            break;
+                        case "%"://nand
+                            stack.Push(!(stack.Pop() & stack.Pop()));
                             break;
                         default:
                             throw new Exception("Error: Invalid operation!!");

@@ -15,6 +15,7 @@
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
                 <RowDefinition />
             </Grid.RowDefinitions>
 
@@ -70,8 +71,8 @@
                 <Label Grid.Column="0" Content="Disj." Width="50"></Label>
                 <TextBox Name="tbDisjunctiveNormalForm" Grid.Column="1" Text=""></TextBox>
             </Grid>
-                    
-            <Grid Grid.Row="5" >
+
+            <Grid Grid.Row="5" Margin="0,2,5,2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"></ColumnDefinition>
                     <ColumnDefinition></ColumnDefinition>
@@ -79,8 +80,17 @@
                 <Label Grid.Column="0" Content="Disj. Sim." Width="50"></Label>
                 <TextBox Name="tbDisjunctiveNormalFormSimplified" Grid.Column="1" Text=""></TextBox>
             </Grid>
-            
-            <Grid Grid.Row="6" Margin="5,2,5,2">
+
+       <Grid Grid.Row="6" Margin="0,2,5,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Content="Nand" Width="50"></Label>
+                <TextBox Name="tbNand" Grid.Column="1" Text=""></TextBox>
+            </Grid>
+
+            <Grid Grid.Row="7" Margin="5,2,5,2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition></ColumnDefinition>
                     <ColumnDefinition></ColumnDefinition>

@@ -44,6 +44,7 @@ namespace AleWk1
             ShowSimplifiedTruthTable();
             ShowDisjunctiveNormalForm();
             ShowDisjunctiveNormalFormSimp();
+            ShowNand();
         }
 
 
@@ -125,7 +126,13 @@ namespace AleWk1
         private void ShowDisjunctiveNormalFormSimp()
         {
             string dj = Helper.GetDisjunctiveNormalFormSimplified(lvSimplifiedTruthTable);
-            tbDisjunctiveNormalFormSimplified.Text = dj;
+            if (String.IsNullOrEmpty(dj)) tbDisjunctiveNormalFormSimplified.Text = tbDisjunctiveNormalForm.Text;
+            else tbDisjunctiveNormalFormSimplified.Text = dj;
+        }
+        private void ShowNand()
+        {
+            string nand = Helper.GetNand(tbPrefix.Text);
+            tbNand.Text = nand;
         }
     }
 }
