@@ -58,9 +58,21 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"></ColumnDefinition>
                     <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" Content="Hash" Width="50"></Label>
                 <TextBox Name="tbHash" Grid.Column="1" Text=""></TextBox>
+                <Label Grid.Column="2" Content="Disj." Width="50"></Label>
+                <TextBox Name="tbHashDisj" Grid.Column="3" Text=""></TextBox>
+                <Label Grid.Column="4" Content="Disj. sim." Width="50"></Label>
+                <TextBox Name="tbHashDisjSimp" Grid.Column="5" Text=""></TextBox>
+                <Label Grid.Column="6" Content="Nand." Width="50"></Label>
+                <TextBox Name="tbHashNand" Grid.Column="7" Text=""></TextBox>
             </Grid>
 
             <Grid Grid.Row="4" Margin="0,2,5,2">
@@ -81,7 +93,7 @@
                 <TextBox Name="tbDisjunctiveNormalFormSimplified" Grid.Column="1" Text=""></TextBox>
             </Grid>
 
-       <Grid Grid.Row="6" Margin="0,2,5,2">
+            <Grid Grid.Row="6" Margin="0,2,5,2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"></ColumnDefinition>
                     <ColumnDefinition></ColumnDefinition>
