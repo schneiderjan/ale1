@@ -56,8 +56,8 @@ namespace AleWk1
 
             tbValues.Text = Helper.GetDistinctVariables(flatList);
 
-            Helper.WriteToFile(flatList);
-            Helper.DisplayGraph();
+            //Helper.WriteToFile(flatList);
+            //Helper.DisplayGraph();
         }
 
         private void ShowTable()
