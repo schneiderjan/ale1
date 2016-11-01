@@ -186,127 +186,249 @@ namespace AleWk1
 
         internal static string GetNand(string input)
         {
-
-            string nand = "", leftSide = "", leftNand = "", rightNand = "", exp = "", fullExp = "";
+            string nand = "",
+                leftSide = "",
+                rightSide = "",
+                leftNand = "",
+                rightNand = "",
+                expression = "",
+                fullExpression = "";
             Stack<Node> stack = new Stack<Node>();
 
             if (input.Contains("%")) return input;
 
             foreach (var node in listWithAllTheNodes)
             {
-                if (!IsOperator(node.Value) && node.Value != not) stack.Push(node);
+                if (!IsOperator(node.Value) && node.Value != not)
+                {
+                    stack.Push(node);
+                }
                 else
                 {
                     switch (node.Value)
                     {
                         case "|":
-                            if (stack.Count != 0) leftNand = stack.Pop().Value;
-
-                            if (leftSide == "")
+                            if (leftSide != "" && rightSide != "")
                             {
-                                if (stack.Count > 0) rightNand = stack.Pop().Value;
-                                nand = nand + "%(%(" + leftNand + "," + leftNand + "),%(" + rightNand + "," + rightNand + "))";
-                                leftSide = nand;
-                                fullExp = "%(%(" + leftNand + "," + leftNand + "),%(" + rightNand + "," + rightNand + "))";
+                                if (stack.Count != 1)
+                                {
+                                    expression = "%(%(" + leftSide + "," + leftSide + "),%(" + rightSide + "," + rightSide + "))";
+                                    fullExpression = expression;
+                                    rightSide = expression;
+                                    leftSide = "";
+                                }
+                                else
+                                {
+                                    leftNand = stack.Pop().Value;
+                                    leftSide = "%(%(" + leftNand + "," + leftNand + "),%(" + leftSide + "," + leftSide + "))";
+                                }
                             }
-                            else
+                            else if (stack.Count == 1)
                             {
-                                exp = "%(%(" + fullExp + "," + fullExp + "),%(" + leftNand + "," + leftNand + "))";
-                                nand = exp;
-                                fullExp = nand;
+                                leftNand = stack.Pop().Value;
+                                leftSide = leftNand;
+                                expression = "%(%(" + leftSide + "," + leftSide + "),%(" + rightSide + "," + rightSide + "))";
+                                rightSide = expression;
+                                leftSide = "";
+                            }
+                            else if (rightSide == "")
+                            {
+                                if (stack.Count != 0) rightNand = stack.Pop().Value;
+                                leftNand = stack.Count > 0 ? stack.Pop().Value : rightSide;
+                                rightSide = "%(%(" + leftNand + "," + leftNand + "),%(" + rightNand + "," + rightNand + "))";
+                                fullExpression = leftSide;
+                            }
+                            else if (leftSide == "")
+                            {
+                                if (stack.Count != 0) leftNand = stack.Pop().Value;
+                                rightNand = stack.Count > 0 ? stack.Pop().Value : rightSide;
+                                leftSide = "%(%(" + leftNand + "," + leftNand + "),%(" + rightNand + "," + rightNand + "))";
+                                fullExpression = leftSide;
                             }
                             break;
                         case "=":
-                            if (stack.Count != 0) leftNand = stack.Pop().Value;
-
-                            if (leftSide == "" && fullExp == "")
+                            if (leftSide != "" && rightSide != "")
                             {
-                                if (stack.Count > 0) rightNand = stack.Pop().Value;
-                                nand = nand + "%(%(%(" + leftNand + "," + leftNand + "),%(" + rightNand + "," + rightNand + ")),%(" + leftNand + "," + rightNand + "))";
-                                leftSide = nand;
-                                fullExp = "%(%(%(" + leftNand + "," + leftNand + "),%(" + rightNand + "," + rightNand + ")),%(" + leftNand + "," + rightNand + "))";
+                                if (stack.Count != 1)
+                                {
+                                    expression = "%(%(%(" + leftSide + "," + leftSide + "),%(" + rightSide + "," + rightSide + ")),%(" + leftSide + "," + rightSide + "))";
+                                    fullExpression = expression;
+                                    rightSide = expression;
+                                    leftSide = "";
+                                }
+                                else
+                                {
+                                    leftNand = stack.Pop().Value;
+                                    leftSide = "%(%(%(" + leftNand + "," + leftNand + "),%(" + leftSide + "," + leftSide + ")),%(" + leftNand + "," + leftSide + "))";
+                                }
                             }
-                            else
+
+                            else if (stack.Count == 1)
                             {
-                                exp = "%(%(%(" + fullExp + "," + fullExp + "),%(" + leftNand + "," + leftNand + ")),%(" + fullExp + "," + leftNand + "))";
-                                nand = exp;
-                                fullExp = nand;
+                                leftNand = stack.Pop().Value;
+                                leftSide = leftNand;
+                                expression = "%(%(%(" + leftSide + "," + leftSide + "),%(" + rightSide + "," + rightSide + ")),%(" + leftSide + "," + rightSide + "))";
+                                rightSide = expression;
+                                leftSide = "";
+                            }
+                            else if (rightSide == "")
+                            {
+                                if (stack.Count != 0) rightNand = stack.Pop().Value;
+                                leftNand = stack.Count > 0 ? stack.Pop().Value : rightSide;
+                                rightSide = "%(%(%(" + leftNand + "," + leftNand + "),%(" + rightNand + "," + rightNand + ")),%(" + leftNand + "," + rightNand + "))";
+                                fullExpression = leftSide;
+                            }
+                            else if (leftSide == "")
+                            {
+                                if (stack.Count != 0) leftNand = stack.Pop().Value;
+                                rightNand = stack.Count > 0 ? stack.Pop().Value : rightSide;
+                                leftSide = "%(%(%(" + leftNand + "," + leftNand + "),%(" + rightNand + "," + rightNand + ")),%(" + leftNand + "," + rightNand + "))";
+                                fullExpression = leftSide;
                             }
                             break;
                         case ">":
-                            if (stack.Count != 0)
-                                leftNand = stack.Pop().Value;
-
-                            if (leftSide == "" && fullExp == "")
+                            if (leftSide != "" && rightSide != "")
                             {
-                                if (stack.Count > 0) rightNand = stack.Pop().Value;
-                                nand = nand + "%(" + leftNand + ",%(" + rightNand + "," + rightNand + "))";
-                                leftSide = nand;
-                                fullExp = "%(" + leftNand + ",%(" + rightNand + "," + rightNand + "))";
+                                if (stack.Count != 1)
+                                {
+                                    expression = "%(" + leftSide + ",%(" + rightSide + "," + rightSide + "))";
+                                    fullExpression = expression;
+                                    rightSide = expression;
+                                    leftSide = "";
+                                }
+                                else
+                                {
+                                    leftNand = stack.Pop().Value;
+                                    leftSide = "%(" + leftNand + ",%(" + leftSide + "," + leftSide + "))";
+                                }
                             }
-                            else
+                            else if (stack.Count == 1)
                             {
-                                exp = "%(" + fullExp + ",%(" + leftNand + "," + leftNand + "))";
-                                nand = exp;
-                                fullExp = nand;
+                                leftNand = stack.Pop().Value;
+                                leftSide = leftNand;
+                                expression = "%(" + leftSide + ",%(" + rightSide + "," + rightSide + "))";
+                                rightSide = expression;
+                                leftSide = "";
+                            }
+                            else if (rightSide == "")
+                            {
+                                if (stack.Count != 0) leftNand = stack.Pop().Value;
+                                rightNand = stack.Count > 0 ? stack.Pop().Value : rightSide;
+                                rightSide = "%(" + leftNand + ",%(" + rightNand + "," + rightNand + "))";
+                                fullExpression = leftSide;
+                            }
+                            else if (leftSide == "")
+                            {
+                                if (stack.Count != 0) leftNand = stack.Pop().Value;
+                                rightNand = stack.Count > 0 ? stack.Pop().Value : rightSide;
+                                leftSide = "%(" + leftNand + ",%(" + rightNand + "," + rightNand + "))";
+                                fullExpression = leftSide;
                             }
                             break;
                         case "&":
-                            if (stack.Count != 0) leftNand = stack.Pop().Value;
-
-                            if (leftSide == "" && fullExp == "")
+                            if (leftSide != "" && rightSide != "")
                             {
-                                if (stack.Count > 0) rightNand = stack.Pop().Value;
-                                nand = nand + "%(%(" + leftNand + "," + rightNand + "),%(" + leftNand + "," + rightNand + "))";
-                                leftSide = nand;
-                                fullExp = "%(%(" + leftNand + "," + rightNand + "),%(" + leftNand + "," + rightNand + "))";
+                                if (stack.Count != 1)
+                                {
+                                    expression = "%(%(" + leftSide + "," + rightSide + "),%(" + leftSide + "," + rightSide + "))";
+                                    fullExpression = expression;
+                                    rightSide = expression;
+                                    leftSide = "";
+                                }
+                                else
+                                {
+                                    leftNand = stack.Pop().Value;
+                                    leftSide = "%(%(" + leftNand + "," + leftSide + "),%(" + leftNand + "," + leftSide + "))";
+                                }
                             }
-                            else
+                            else if (stack.Count == 1)
                             {
-                                try
-                                {
-                                    exp = "%(%(" + fullExp + "," + leftNand + "),%(" + fullExp + "," + leftNand + "))";
-                                    nand = exp;
-                                    fullExp = nand;
-                                }
-                                catch (OutOfMemoryException)
-                                {
-                                    Debug.WriteLine("NAND too long.");
-                                }
+                                leftNand = stack.Pop().Value;
+                                leftSide = leftNand;
+                                expression = "%(%(" + leftSide + "," + rightSide + "),%(" + leftSide + "," + rightSide + "))";
+                                rightSide = expression;
+                                leftSide = "";
+                            }
+                            else if (rightSide == "")
+                            {
+                                if (stack.Count != 0) rightNand = stack.Pop().Value;
+                                leftNand = stack.Count > 0 ? stack.Pop().Value : rightSide;
+                                rightSide = "%(%(" + leftNand + "," + rightNand + "),%(" + leftNand + "," + rightNand + "))";
+                                fullExpression = leftSide;
+                            }
+                            else if (leftSide == "")
+                            {
+                                if (stack.Count != 0) leftNand = stack.Pop().Value;
+                                rightNand = stack.Count > 0 ? stack.Pop().Value : rightSide;
+                                leftSide = "%(%(" + leftNand + "," + rightNand + "),%(" + leftNand + "," + rightNand + "))";
+                                fullExpression = leftSide;
                             }
                             break;
                         case "~":
-                            if (stack.Count != 0) leftNand = stack.Pop().Value;
-
-                            if (leftSide == "" && fullExp == "")
+                            if (rightSide == "")
                             {
-                                nand = nand + "%(" + leftNand + "," + leftNand + ")";
-                                leftSide = nand;
-                                fullExp = "%(" + leftNand + "," + leftNand + ")";
+                                if (stack.Count == 2)
+                                {
+                                    leftNand = stack.Pop().Value;
+                                    rightSide = stack.Pop().Value;
+                                    fullExpression = "%(" + leftNand + "," + leftNand + ")";
+                                    leftSide = fullExpression;
+                                }
+                                else if (stack.Count == 1)
+                                {
+                                    leftNand = stack.Pop().Value;
+                                    fullExpression = "%(" + leftNand + "," + leftNand + ")";
+                                    rightSide = fullExpression;
+                                }
+                                else if (stack.Count == 0)
+                                {
+                                    fullExpression = "%(" + rightSide + "," + rightSide + ")";
+                                    rightSide = fullExpression;
+                                }
+                            }
+                            else if (leftSide == "")
+                            {
+                                if (stack.Count == 2)
+                                {
+                                    leftNand = stack.Pop().Value;
+                                    rightSide = stack.Pop().Value;
+                                    fullExpression = "%(" + leftNand + "," + leftNand + ")";
+                                    leftSide = fullExpression;
+                                }
+                                else if (stack.Count == 1)
+                                {
+                                    leftNand = stack.Pop().Value;
+                                    fullExpression = "%(" + leftNand + "," + leftNand + ")";
+                                    leftSide = fullExpression;
+                                }
+                                else if (stack.Count == 0)
+                                {
+                                    fullExpression = "%(" + rightSide + "," + rightSide + ")";
+                                    rightSide = fullExpression;
+                                }
                             }
                             else
                             {
                                 try
                                 {
-                                    exp = "%(" + fullExp + "," + fullExp + ")";
+                                    if (leftSide != "") leftSide = "%(" + leftSide + "," + leftSide + ")";
+                                    else rightSide = "%(" + rightSide + "," + rightSide + ")";
                                 }
                                 catch (OutOfMemoryException)
                                 {
-                                    Debug.WriteLine("NAND too long.");
+                                    Debug.WriteLine("Expression too long");
                                 }
                                 finally
                                 {
-                                    nand = "";
+                                    nand = input;
                                 }
                             }
                             break;
-                        case "%":
-                            break;
-                        default:
-                            throw new Exception("Not NANDable!");
+                        default: throw new Exception("Something went wrong");
                     }
                 }
             }
+            nand = fullExpression;
             return nand;
         }
 
