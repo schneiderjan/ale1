@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using Ale1Project.Model;
+using Ale1Project.Service;
 
 namespace Ale1Project.ViewModel
 {
@@ -11,8 +12,6 @@ namespace Ale1Project.ViewModel
     /// </summary>
     public class MainViewModel : ViewModelBase
     {
-        private readonly IDataService _dataService;
-
         /// <summary>
         /// The <see cref="WelcomeTitle" /> property's name.
         /// </summary>
@@ -39,27 +38,10 @@ namespace Ale1Project.ViewModel
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
-        public MainViewModel(IDataService dataService)
+        public MainViewModel(IFixConversionService fixConversionService)
         {
-            _dataService = dataService;
-            _dataService.GetData(
-                (item, error) =>
-                {
-                    if (error != null)
-                    {
-                        // Report error here
-                        return;
-                    }
 
-                    WelcomeTitle = item.Title;
-                });
         }
 
-        ////public override void Cleanup()
-        ////{
-        ////    // Clean up if needed
-
-        ////    base.Cleanup();
-        ////}
     }
 }
