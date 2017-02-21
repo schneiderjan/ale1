@@ -75,6 +75,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\ExpressionModel.cs" />
     <Compile Include="Model\NodeModel.cs" />
     <Compile Include="Service\FixConversionService.cs" />
     <Compile Include="Service\IFixConversionService.cs" />

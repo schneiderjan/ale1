@@ -1,9 +1,19 @@
 ﻿using GalaSoft.MvvmLight;
 using Ale1Project.Model;
 using Ale1Project.Service;
+using GalaSoft.MvvmLight.CommandWpf;
 
 namespace Ale1Project.ViewModel
 {
+    //"&((|(A,~(B)),C)"
+    //&(|(A,B),>(C,~(&(|(D,E),>(&(|(F,G),>(H,~(&(|(I,J),>(K,~(L)))))),~(M))))))
+    //"&(=(A,B),|(C,D))"
+    //"&((|(A,~(B)),C)"
+    //"=( >(A,B), |( ~(A) ,B) ) 
+    //&(A, ~(B))
+    //&(=(A,B),|(C,D))
+    //~(&(~(&(A,C)),~(&(~(B),C))))
+
     /// <summary>
     /// This class contains properties that the main View can data bind to.
     /// <para>
@@ -12,36 +22,69 @@ namespace Ale1Project.ViewModel
     /// </summary>
     public class MainViewModel : ViewModelBase
     {
-        /// <summary>
-        /// The <see cref="WelcomeTitle" /> property's name.
-        /// </summary>
-        public const string WelcomeTitlePropertyName = "WelcomeTitle";
+        private readonly IFixConversionService _fixConversionService;
+        private string _prefix;
+        private string _infix;
+        private string _distinctVariables;
+        private ExpressionModel _expressionModel;
 
-        private string _welcomeTitle = string.Empty;
-
-        /// <summary>
-        /// Gets the WelcomeTitle property.
-        /// Changes to that property's value raise the PropertyChanged event. 
-        /// </summary>
-        public string WelcomeTitle
+        public string Prefix
         {
-            get
-            {
-                return _welcomeTitle;
-            }
+            get { return _prefix; }
             set
             {
-                Set(ref _welcomeTitle, value);
+                _prefix = value;
+                ExpressionModel.Prefix = value;
+                RaisePropertyChanged();
+                ParsePrefixCommand.RaiseCanExecuteChanged();
             }
         }
 
-        /// <summary>
-        /// Initializes a new instance of the MainViewModel class.
-        /// </summary>
-        public MainViewModel(IFixConversionService fixConversionService)
-        {
+        public string Infix { get { return ExpressionModel.Infix; } set { _infix = value; RaisePropertyChanged(); } }
 
+        public ExpressionModel ExpressionModel
+        {
+            get { return _expressionModel; }
+            set { _expressionModel = value; RaisePropertyChanged(); }
         }
 
+        public RelayCommand ParsePrefixCommand { get; set; }
+
+        public string DistinctVariables
+        {
+            get { return _distinctVariables; }
+            set { _distinctVariables = value; RaisePropertyChanged(); }
+        }
+
+        public MainViewModel(IFixConversionService fixConversionService)
+        {
+            ParsePrefixCommand = new RelayCommand(ParsePrefix, ParseCanExecute);
+
+            //FOR DEBUGGING
+            _expressionModel = new ExpressionModel();
+            Prefix = "&((|(A,~(B)),C)";
+            ExpressionModel.Prefix = "&((|(A,~(B)),C)";
+
+            _fixConversionService = fixConversionService;
+        }
+
+        private bool ParseCanExecute()
+        {
+            return !string.IsNullOrEmpty(_prefix);
+        }
+
+        private void ParsePrefix()
+        {
+            Infix = _fixConversionService.ParsePrefix(ExpressionModel);
+            _fixConversionService.GetDistinctVariables(ExpressionModel);
+
+            //create string for binding with distinct values
+            string distinctVariables = null;
+            foreach (var c in _expressionModel.DistinctVariables)
+            {
+                distinctVariables += c + " ";
+            }
+            DistinctVariables = distinctVariables;
+        }
     }
 }
