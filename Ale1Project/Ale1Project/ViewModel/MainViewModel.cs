@@ -1,4 +1,5 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System.Collections.ObjectModel;
+using GalaSoft.MvvmLight;
 using Ale1Project.Model;
 using Ale1Project.Service;
 using GalaSoft.MvvmLight.CommandWpf;
@@ -23,6 +24,7 @@ namespace Ale1Project.ViewModel
     public class MainViewModel : ViewModelBase
     {
         private readonly IFixConversionService _fixConversionService;
+        private readonly ITruthTableService _truthTableService;
         private string _prefix;
         private string _infix;
         private string _distinctVariables;
@@ -56,7 +58,15 @@ namespace Ale1Project.ViewModel
             set { _distinctVariables = value; RaisePropertyChanged(); }
         }
 
-        public MainViewModel(IFixConversionService fixConversionService)
+        public ObservableCollection<string> TruthTable
+        {
+            get{return _truthTable;}
+            set{_truthTable = value; RaisePropertyChanged();}
+        }
+        private ObservableCollection<string> _truthTable = new ObservableCollection<string>();
+
+
+        public MainViewModel(IFixConversionService fixConversionService, ITruthTableService truthTableService)
         {
             ParsePrefixCommand = new RelayCommand(ParsePrefix, ParseCanExecute);
 
@@ -66,6 +76,7 @@ namespace Ale1Project.ViewModel
             ExpressionModel.Prefix = "&((|(A,~(B)),C)";
 
             _fixConversionService = fixConversionService;
+            _truthTableService = truthTableService;
         }
 
         private bool ParseCanExecute()
@@ -85,6 +96,8 @@ namespace Ale1Project.ViewModel
                 distinctVariables += c + " ";
             }
             DistinctVariables = distinctVariables;
+
+            TruthTable = new ObservableCollection<string>(_truthTableService.GetTruthTable(_expressionModel));
         }
     }
 }

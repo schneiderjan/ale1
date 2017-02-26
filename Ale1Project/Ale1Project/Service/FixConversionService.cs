@@ -10,20 +10,13 @@ namespace Ale1Project.Service
 {
     public class FixConversionService : IFixConversionService
     {
-        private readonly MainViewModel _mainViewModel;
-        private const string Not = "~";
-        private static List<string> _operators = new List<string>()
-            {
-                "&",
-                "|",
-                ">",
-                "=",
-                "%",
-            };
-
         private string infix;
+        private IOperatorService _operatorService;
 
-
+        public FixConversionService(IOperatorService operatorService)
+        {
+            _operatorService = operatorService;
+        }
 
         public string ParsePrefix(ExpressionModel expressionModel)
         {
@@ -37,9 +30,15 @@ namespace Ale1Project.Service
             var prefixInput = ConvertStringToList(expressionModel.Prefix);
             prefixInput.Reverse();
 
-            expressionModel.TreeNodes = GetTree(prefixInput);
+            var treeNodes = GetTree(prefixInput);
+            expressionModel.TreeNodes = treeNodes;
+            foreach (var nodeModel in treeNodes)
+            {
+                expressionModel.TreeNodesReversed.Add(nodeModel);
+            }
 
             expressionModel.Infix = ConvertNodesToInfix(expressionModel.TreeNodes);
+
             return expressionModel.Infix;
         }
 
@@ -47,7 +46,7 @@ namespace Ale1Project.Service
         {
             infix = "";
             flatNodeTree.Reverse();
-
+            
             InOrder(flatNodeTree[0], null);
             return infix;
         }
@@ -62,7 +61,7 @@ namespace Ale1Project.Service
 
                 InOrder(rootNode.LeftChild, rootNode);
 
-                if (IsOperator(rootNode.Value) || rootNode.Value.Equals(Not)) infix += ConvertAsciiReprentation(rootNode.Value);
+                if (_operatorService.IsOperator(rootNode.Value) || rootNode.Value.Equals(_operatorService.Not)) infix += ConvertAsciiReprentation(rootNode.Value);
                 else infix += rootNode.Value;
 
                 InOrder(rootNode.RightChild, rootNode);
@@ -73,7 +72,7 @@ namespace Ale1Project.Service
             {
                 InOrder(rootNode.LeftChild, rootNode);
 
-                if (IsOperator(rootNode.Value) || rootNode.Value.Equals(Not)) infix += ConvertAsciiReprentation(rootNode.Value);
+                if (_operatorService.IsOperator(rootNode.Value) || rootNode.Value.Equals(_operatorService.Not)) infix += ConvertAsciiReprentation(rootNode.Value);
                 else infix += rootNode.Value;
 
                 InOrder(rootNode.RightChild, rootNode);
@@ -86,7 +85,7 @@ namespace Ale1Project.Service
 
             switch (rootNodeValue)
             {
-                case Not:
+                case "~":
                     op = "¬";
                     break;
                 case "&":
@@ -115,7 +114,7 @@ namespace Ale1Project.Service
 
             foreach (var c in prefixInput)
             {
-                if (IsOperator(c))
+                if (_operatorService.IsOperator(c))
                 {
                     NodeModel leftOperand = stack.Pop();
                     NodeModel rightOperand = stack.Pop();
@@ -123,7 +122,7 @@ namespace Ale1Project.Service
                     flatList.Add(node);
                     stack.Push(node);
                 }
-                else if (c.Equals(Not))
+                else if (c.Equals(_operatorService.Not))
                 {
                     NodeModel rightOperand = stack.Pop();
                     var node = new NodeModel(c, rightOperand);
@@ -138,12 +137,6 @@ namespace Ale1Project.Service
                 }
             }
             return flatList;
-        }
-
-        private bool IsOperator(string o)
-        {
-            if (_operators.Contains(o)) return true;
-            return false;
         }
 
         private List<string> ConvertStringToList(string input)
@@ -162,7 +155,7 @@ namespace Ale1Project.Service
             string vars = "";
             foreach (var n in expressionModel.TreeNodes)
             {
-                if (!IsOperator(n.Value) && !n.Value.Equals(Not)) { vars += n.Value; }
+                if (!_operatorService.IsOperator(n.Value) && !n.Value.Equals(_operatorService.Not)) { vars += n.Value; }
 
             }
             var distinct = new string(vars.Distinct().ToArray());
@@ -182,4 +175,6 @@ namespace Ale1Project.Service
             return new string(a);
         }
     }
+
+   
 }

@@ -33,6 +33,8 @@ namespace Ale1Project.ViewModel
             
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<IFixConversionService, FixConversionService>();
+            SimpleIoc.Default.Register<ITruthTableService, TruthTableService>();
+            SimpleIoc.Default.Register<IOperatorService, OperatorService>();
         }
 
         /// <summary>
@@ -52,6 +54,17 @@ namespace Ale1Project.ViewModel
         public IFixConversionService FixConversionService
         {
             get { return ServiceLocator.Current.GetInstance<FixConversionService>(); }
+        }
+
+        public ITruthTableService TruthTableService
+        {
+            get { return ServiceLocator.Current.GetInstance<TruthTableService>(); }
+        }
+
+        public IOperatorService OperatorService
+        {
+            get { return ServiceLocator.Current.GetInstance<OperatorService>(); }
+
         }
 
         /// <summary>

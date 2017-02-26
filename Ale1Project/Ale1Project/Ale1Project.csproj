@@ -77,8 +77,13 @@
     </ApplicationDefinition>
     <Compile Include="Model\ExpressionModel.cs" />
     <Compile Include="Model\NodeModel.cs" />
+    <Compile Include="Model\TruthTableModel.cs" />
+    <Compile Include="Service\IOperatorService.cs" />
+    <Compile Include="Service\OperatorService.cs" />
     <Compile Include="Service\FixConversionService.cs" />
     <Compile Include="Service\IFixConversionService.cs" />
+    <Compile Include="Service\ITruthTableService.cs" />
+    <Compile Include="Service\TruthTableService.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="MainWindow.xaml">

@@ -152,7 +152,7 @@
                 <ListView
                     x:Name="lvTruthTable"
                     Grid.Column="0"
-                    ItemsSource="{Binding TruthTable}" />
+                    ItemsSource="{Binding }" />
                 <ListView
                     x:Name="lvSimplifiedTruthTable"
                     Grid.Column="1"

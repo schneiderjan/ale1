@@ -752,7 +752,7 @@ namespace AleWk1
 
         internal static List<string> GenerateTable(string input)
         {
-            var Variables = ConvertStringToCharList(input);
+            var variables = ConvertStringToCharList(input);
 
             var listString = ConvertStringToList(input);
 
@@ -764,7 +764,10 @@ namespace AleWk1
             bool[] answer1 = new bool[inputTable.GetLength(0)];
             for (int i = 0; i < inputTable.GetLength(0); i++)
             {
-                for (int j = 0; j < inputTable.GetLength(1); j++) SetValue(variables[j], inputTable[i, j]);
+                for (int j = 0; j < inputTable.GetLength(1); j++)
+                {
+                    SetValue(variables[j], inputTable[i, j]);
+                }
                 answer1[i] = Solve();
             }
             answer = answer1;
