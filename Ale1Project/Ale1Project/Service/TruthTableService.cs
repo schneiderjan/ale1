@@ -20,7 +20,10 @@ namespace Ale1Project.Service
         {
             expressionModel.TruthTable.Rows.Clear();
             var header = expressionModel.DistinctVariables[0].ToString();
-            for (var i = 1; i < expressionModel.DistinctVariables.Count; i++) header = header + "\t" + expressionModel.DistinctVariables[0];
+            for (var i = 1; i < expressionModel.DistinctVariables.Count; i++)
+            {
+                header = header + "\t" + expressionModel.DistinctVariables[i];
+            }
 
             header = header + "\t" + expressionModel.Infix;
             expressionModel.TruthTable.Rows.Add(header);
@@ -49,15 +52,15 @@ namespace Ale1Project.Service
                 values.Add(GetBoolRepresentation(answer1[i]));
             }
 
-            for (int i = 0; i < values.Count; i = i + values.Count + 1)
+            for (int i = 0; i < values.Count; i = i + expressionModel.DistinctVariables.Count + 1)
             {
                 var row = "";
                 row = values[i];
 
-                for (int j = 1; j < values[i].Length + 1; j++)
+                for (int j = 1; j < expressionModel.DistinctVariables.Count + 1; j++)
                 {
                     row = row + "\t" + values[i + j];
-                    if (j == values.Count) expressionModel.TruthTable.Binary += values[i + j];
+                    if (j == expressionModel.DistinctVariables.Count) expressionModel.TruthTable.Binary += values[i + j];
                 }
                 expressionModel.TruthTable.Rows.Add(row);
             }
@@ -126,8 +129,23 @@ namespace Ale1Project.Service
 
         public string CalculateHash(ExpressionModel expressionModel)
         {
+            char[] charArray = expressionModel.TruthTable.Binary.ToCharArray();
+            Array.Reverse(charArray);
+            expressionModel.TruthTable.Binary = new string(charArray);
 
-            return "";
+            int rest = expressionModel.TruthTable.Binary.Length % 4;
+            if (rest != 0)
+            {
+                expressionModel.TruthTable.Binary = new string('0', 4 - rest) + expressionModel.TruthTable.Binary;
+            }
+
+            string output = "";
+            for (int i = 0; i <= expressionModel.TruthTable.Binary.Length - 4; i += 4)
+            {
+                output += $"{Convert.ToByte(expressionModel.TruthTable.Binary.Substring(i, 4), 2):X}";
+            }
+            expressionModel.TruthTable.Hexadecimal = output;
+            return output;
         }
 
         private bool[,] GenerateTableInput(int nrOfColumns)
@@ -151,27 +169,9 @@ namespace Ale1Project.Service
                     }
                 }
             }
-            //tableVals = table;
             return table;
         }
 
 
-        //var hexadecimal = "";
-        //var tableValues = Helper.GenerateTable(tbPrefix.Text);
-
-        //for (int i = 0; i < tableValues.Count; i = i + tbValues.Text.Length + 1)
-        //{
-        //    var row = "";
-        //    row = tableValues[i];
-
-        //    for (int j = 1; j < tbValues.Text.Length + 1; j++)
-        //    {
-        //        row = row + "\t" + tableValues[i + j];
-        //        if (j == tbValues.Text.Length) hexadecimal = hexadecimal + tableValues[i + j];
-        //    }
-        //    lvTruthTable.Items.Add(row);
-        //}
-
-        //tbHash.Text = Helper.HexaDecimal(hexadecimal);
     }
 }

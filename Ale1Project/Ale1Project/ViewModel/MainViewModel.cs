@@ -16,7 +16,7 @@ namespace Ale1Project.ViewModel
     //~(&(~(&(A,C)),~(&(~(B),C))))
 
     /// <summary>
-    /// This class contains properties that the main View can data bind to.
+    /// This class contains properties that the main View can data expressionModel.Binaryd to.
     /// <para>
     /// See http://www.mvvmlight.net
     /// </para>
@@ -42,6 +42,12 @@ namespace Ale1Project.ViewModel
             }
         }
 
+        public string Hash
+        {
+            get { return _hash; }
+            set { _hash = value; RaisePropertyChanged();}
+        }
+        
         public string Infix { get { return ExpressionModel.Infix; } set { _infix = value; RaisePropertyChanged(); } }
 
         public ExpressionModel ExpressionModel
@@ -60,10 +66,11 @@ namespace Ale1Project.ViewModel
 
         public ObservableCollection<string> TruthTable
         {
-            get{return _truthTable;}
-            set{_truthTable = value; RaisePropertyChanged();}
+            get { return _truthTable; }
+            set { _truthTable = value; RaisePropertyChanged(); }
         }
         private ObservableCollection<string> _truthTable = new ObservableCollection<string>();
+        private string _hash;
 
 
         public MainViewModel(IFixConversionService fixConversionService, ITruthTableService truthTableService)
@@ -89,7 +96,7 @@ namespace Ale1Project.ViewModel
             Infix = _fixConversionService.ParsePrefix(ExpressionModel);
             _fixConversionService.GetDistinctVariables(ExpressionModel);
 
-            //create string for binding with distinct values
+            //create string for expressionModel.Binaryding with distinct values
             string distinctVariables = null;
             foreach (var c in _expressionModel.DistinctVariables)
             {
@@ -98,6 +105,8 @@ namespace Ale1Project.ViewModel
             DistinctVariables = distinctVariables;
 
             TruthTable = new ObservableCollection<string>(_truthTableService.GetTruthTable(_expressionModel));
+            Hash = _truthTableService.CalculateHash(_expressionModel);
         }
+
     }
 }

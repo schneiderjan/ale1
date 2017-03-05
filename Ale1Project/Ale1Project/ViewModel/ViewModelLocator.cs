@@ -6,7 +6,7 @@
   </Application.Resources>
   
   In the View:
-  DataContext="{Binding Source={StaticResource Locator}, Path=ViewModelName}"
+  DataContext="{expressionModel.Binaryding Source={StaticResource Locator}, Path=ViewModelName}"
 */
 
 using GalaSoft.MvvmLight;
@@ -19,7 +19,7 @@ namespace Ale1Project.ViewModel
 {
     /// <summary>
     /// This class contains static references to all the view models in the
-    /// application and provides an entry point for the bindings.
+    /// application and provides an entry point for the expressionModel.Binarydings.
     /// <para>
     /// See http://www.mvvmlight.net
     /// </para>
@@ -42,7 +42,7 @@ namespace Ale1Project.ViewModel
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
             "CA1822:MarkMembersAsStatic",
-            Justification = "This non-static member is needed for data binding purposes.")]
+            Justification = "This non-static member is needed for data expressionModel.Binaryding purposes.")]
         public MainViewModel Main
         {
             get
