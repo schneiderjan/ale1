@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Ale1Project.Model;
 
@@ -172,6 +173,86 @@ namespace Ale1Project.Service
             return table;
         }
 
+        public List<string> SimplifyTruthTable(ExpressionModel expressionModel)
+        {
+            List<string> rows = new List<string>();
+            List<string> truthRows = new List<string>();
+            List<string> result = new List<string>();
 
+            foreach (var str in expressionModel.TruthTable.Rows)
+            {
+                var x = Regex.Replace(str.ToString(), @"\s+", "");
+                rows.Add(x);
+            }
+            //truthTable = rows;
+
+            for (int i = 1; i < rows.Count; i++)
+            {
+                if (rows[i][expressionModel.DistinctVariables.Count] == '1') truthRows.Add(rows[i]);
+            }
+
+            if (truthRows.Count > 2)
+            {
+                for (int i = 0; i < expressionModel.DistinctVariables.Count; i++) //Columns i
+                {
+                    for (int j = 1; j < rows.Count; j++) //Rows j
+                    {
+                        int simplifiable = 0;
+
+                        for (int k = 1; k < rows.Count; k++)
+                        {
+                            if (rows[j][expressionModel.DistinctVariables.Count] == rows[k][expressionModel.DistinctVariables.Count]
+                                && rows[j][expressionModel.DistinctVariables.Count] == '1'
+                                && rows[j][i] == rows[k][i]) simplifiable++;
+                        }
+
+                        if (simplifiable > 1)
+                        {
+                            string leftside = "", rightside = "";
+
+                            for (int t = 0; t < i; t++) leftside += "*\t";
+                            for (int t = i + 1; t < expressionModel.DistinctVariables.Count; t++) rightside += "*\t";
+
+                            string tautology = "";
+                            if (rows[j][i] == '1')
+                            {
+                                tautology = leftside + "0\t" + rightside + "1";
+                                if (result.Contains(tautology)) result.Remove(tautology);
+                            }
+                            else tautology = leftside + "1\t" + rightside + "1";
+
+                            result.Add(leftside + rows[j][i] + "\t" + rightside + "1");
+                        }
+                        else
+                        {
+                            if (rows[j][expressionModel.DistinctVariables.Count] != '1')
+                            {
+                                string simplified = "";
+                                for (int t = 0; t < rows[j].Length; t++) simplified += rows[j][t] + "\t";
+                                result.Add(simplified);
+                            }
+                        }
+                    }
+                }
+
+            }
+            else
+            {
+                for (int i = 1; i < rows.Count; i++)
+                {
+                    var simplifedrow = "";
+                    for (int j = 0; j < rows[i].Length; j++)
+                    {
+                        simplifedrow = simplifedrow + rows[i][j] + "\t";
+                    }
+                    result.Add(simplifedrow);
+                }
+            }
+
+            result = result.Distinct().ToList();
+            result.Insert(0, expressionModel.TruthTable.Rows[0]);
+            expressionModel.TruthTable.RowsSimplified = result;
+            return result;
+        }
     }
 }

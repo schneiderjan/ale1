@@ -25,10 +25,13 @@ namespace Ale1Project.ViewModel
     {
         private readonly IFixConversionService _fixConversionService;
         private readonly ITruthTableService _truthTableService;
+        private ObservableCollection<string> _truthTable = new ObservableCollection<string>();
         private string _prefix;
         private string _infix;
         private string _distinctVariables;
         private ExpressionModel _expressionModel;
+        private string _hash;
+        private ObservableCollection<string> _simplifiedTruthTable = new ObservableCollection<string>();
 
         public string Prefix
         {
@@ -69,8 +72,13 @@ namespace Ale1Project.ViewModel
             get { return _truthTable; }
             set { _truthTable = value; RaisePropertyChanged(); }
         }
-        private ObservableCollection<string> _truthTable = new ObservableCollection<string>();
-        private string _hash;
+
+        public ObservableCollection<string> SimplifiedTruthTable
+        {
+            get { return _simplifiedTruthTable; }
+            set { _simplifiedTruthTable = value; RaisePropertyChanged(); }
+        }
+
 
 
         public MainViewModel(IFixConversionService fixConversionService, ITruthTableService truthTableService)
@@ -106,6 +114,8 @@ namespace Ale1Project.ViewModel
 
             TruthTable = new ObservableCollection<string>(_truthTableService.GetTruthTable(_expressionModel));
             Hash = _truthTableService.CalculateHash(_expressionModel);
+
+            SimplifiedTruthTable = new ObservableCollection<string>(_truthTableService.SimplifyTruthTable(_expressionModel));
         }
 
     }
