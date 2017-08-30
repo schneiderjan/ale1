@@ -2,7 +2,7 @@
 using System.Windows.Documents;
 using GalaSoft.MvvmLight;
 
-namespace Ale2Project.Model
+namespace Ale1Project.Model
 {
     /// <summary>
     /// This class contains properties that a View can data bind to.

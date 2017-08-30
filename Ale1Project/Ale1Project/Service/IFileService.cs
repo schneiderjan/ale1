@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Documents;
-using Ale2Project.Model;
+using Ale1Project.Model;
 
-namespace Ale2Project.Service
+namespace Ale1Project.Service
 {
     public interface IFileService
     {

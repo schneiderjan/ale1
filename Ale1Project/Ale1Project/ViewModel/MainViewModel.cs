@@ -2,8 +2,6 @@
 using GalaSoft.MvvmLight;
 using Ale1Project.Model;
 using Ale1Project.Service;
-using Ale2Project.Model;
-using Ale2Project.Service;
 using GalaSoft.MvvmLight.CommandWpf;
 
 namespace Ale1Project.ViewModel

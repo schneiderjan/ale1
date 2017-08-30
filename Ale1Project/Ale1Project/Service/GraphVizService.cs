@@ -7,9 +7,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Ale1Project.Model;
-using Ale2Project.Model;
 
-namespace Ale2Project.Service
+namespace Ale1Project.Service
 {
     public class GraphVizService : IGraphVizService
     {

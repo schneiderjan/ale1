@@ -14,7 +14,6 @@ using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
 using Ale1Project.Model;
 using Ale1Project.Service;
-using Ale2Project.Service;
 
 namespace Ale1Project.ViewModel
 {
@@ -31,11 +30,12 @@ namespace Ale1Project.ViewModel
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
-
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<IFixConversionService, FixConversionService>();
             SimpleIoc.Default.Register<ITruthTableService, TruthTableService>();
             SimpleIoc.Default.Register<IOperatorService, OperatorService>();
+            SimpleIoc.Default.Register<IGraphVizService, GraphVizService>();
+            SimpleIoc.Default.Register<IFileService, FileService>();
         }
 
         /// <summary>

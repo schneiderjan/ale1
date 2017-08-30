@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Ale2Project.Model;
+using Ale1Project.Model;
 
-namespace Ale2Project.Service
+namespace Ale1Project.Service
 {
     public class FileService : IFileService
     {
- 
+
         public void WriteGraphVizFileToDotFile(List<string> lines)
         {
-            using (StreamWriter sw = new StreamWriter(Directory.GetCurrentDirectory(), false))
+            using (StreamWriter sw = new StreamWriter(Directory.GetCurrentDirectory()+"\\dot.dot", false))
             {
                 foreach (var line in lines)
                 {
