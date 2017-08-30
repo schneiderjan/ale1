@@ -254,5 +254,22 @@ namespace Ale1Project.Service
             expressionModel.TruthTable.RowsSimplified = result;
             return result;
         }
+
+        public string GetDisjunctiveNormalForm(ExpressionModel expressionModel)
+        {
+            foreach (var truthTableAnswer in expressionModel.TruthTable.Answers)
+            {
+                if (truthTableAnswer)
+                {
+
+                }
+                else
+                {
+                    
+                }
+            }
+
+            return "";
+        }
     }
 }

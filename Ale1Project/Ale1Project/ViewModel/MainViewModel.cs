@@ -32,6 +32,13 @@ namespace Ale1Project.ViewModel
         private ExpressionModel _expressionModel;
         private string _hash;
         private ObservableCollection<string> _simplifiedTruthTable = new ObservableCollection<string>();
+        private string _disjunctiveNormalForm;
+
+        public string DisjunctiveNormalForm
+        {
+            get { return _disjunctiveNormalForm; }
+            set { _disjunctiveNormalForm = value; RaisePropertyChanged(); }
+        }
 
         public string Prefix
         {
@@ -116,6 +123,8 @@ namespace Ale1Project.ViewModel
             Hash = _truthTableService.CalculateHash(_expressionModel);
 
             SimplifiedTruthTable = new ObservableCollection<string>(_truthTableService.SimplifyTruthTable(_expressionModel));
+
+            DisjunctiveNormalForm = _truthTableService.GetDisjunctiveNormalForm(_expressionModel);
         }
 
     }
