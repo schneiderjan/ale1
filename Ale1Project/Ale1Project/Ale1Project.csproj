@@ -75,6 +75,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\GraphVizFileModel.cs" />
+    <Compile Include="Service\FileService.cs" />
+    <Compile Include="Service\GraphVizService.cs" />
+    <Compile Include="Service\IFileService.cs" />
+    <Compile Include="Service\IGraphVizService.cs" />
     <Compile Include="Model\ExpressionModel.cs" />
     <Compile Include="Model\NodeModel.cs" />
     <Compile Include="Model\TruthTableModel.cs" />

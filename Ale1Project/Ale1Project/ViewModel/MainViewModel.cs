@@ -2,6 +2,8 @@
 using GalaSoft.MvvmLight;
 using Ale1Project.Model;
 using Ale1Project.Service;
+using Ale2Project.Model;
+using Ale2Project.Service;
 using GalaSoft.MvvmLight.CommandWpf;
 
 namespace Ale1Project.ViewModel
@@ -25,11 +27,14 @@ namespace Ale1Project.ViewModel
     {
         private readonly IFixConversionService _fixConversionService;
         private readonly ITruthTableService _truthTableService;
+        private readonly IGraphVizService _graphVizService;
+        private readonly IFileService _fileService;
         private ObservableCollection<string> _truthTable = new ObservableCollection<string>();
         private string _prefix;
         private string _infix;
         private string _distinctVariables;
         private ExpressionModel _expressionModel;
+        private GraphVizFileModel _graphVizFileModel;
         private string _hash;
         private ObservableCollection<string> _simplifiedTruthTable = new ObservableCollection<string>();
         private string _disjunctiveNormalForm;
@@ -55,10 +60,14 @@ namespace Ale1Project.ViewModel
         public string Hash
         {
             get { return _hash; }
-            set { _hash = value; RaisePropertyChanged();}
+            set { _hash = value; RaisePropertyChanged(); }
         }
-        
-        public string Infix { get { return ExpressionModel.Infix; } set { _infix = value; RaisePropertyChanged(); } }
+
+        public string Infix
+        {
+            get { return ExpressionModel.Infix; }
+            set { _infix = value; RaisePropertyChanged(); }
+        }
 
         public ExpressionModel ExpressionModel
         {
@@ -86,9 +95,7 @@ namespace Ale1Project.ViewModel
             set { _simplifiedTruthTable = value; RaisePropertyChanged(); }
         }
 
-
-
-        public MainViewModel(IFixConversionService fixConversionService, ITruthTableService truthTableService)
+        public MainViewModel(IFixConversionService fixConversionService, ITruthTableService truthTableService, IGraphVizService graphVizService, IFileService fileService)
         {
             ParsePrefixCommand = new RelayCommand(ParsePrefix, ParseCanExecute);
 
@@ -99,6 +106,8 @@ namespace Ale1Project.ViewModel
 
             _fixConversionService = fixConversionService;
             _truthTableService = truthTableService;
+            _graphVizService = graphVizService;
+            _fileService = fileService;
         }
 
         private bool ParseCanExecute()
@@ -110,6 +119,10 @@ namespace Ale1Project.ViewModel
         {
             Infix = _fixConversionService.ParsePrefix(ExpressionModel);
             _fixConversionService.GetDistinctVariables(ExpressionModel);
+
+            _graphVizFileModel = _graphVizService.ConvertExpressionModelToGraphVizFile(_expressionModel);
+            _fileService.WriteGraphVizFileToDotFile(_graphVizFileModel.Lines);
+            _graphVizService.DisplayAutomaton();
 
             //create string for expressionModel.Binaryding with distinct values
             string distinctVariables = null;
