@@ -12,7 +12,7 @@ namespace Ale1Project.Service
 
         public void WriteGraphVizFileToDotFile(List<string> lines)
         {
-            using (StreamWriter sw = new StreamWriter(Directory.GetCurrentDirectory()+"\\dot.dot", false))
+            using (StreamWriter sw = new StreamWriter(Directory.GetCurrentDirectory() + "\\dot.dot", false))
             {
                 foreach (var line in lines)
                 {

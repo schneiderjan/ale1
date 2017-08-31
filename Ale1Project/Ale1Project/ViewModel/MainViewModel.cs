@@ -120,7 +120,7 @@ namespace Ale1Project.ViewModel
 
             _graphVizFileModel = _graphVizService.ConvertExpressionModelToGraphVizFile(_expressionModel);
             _fileService.WriteGraphVizFileToDotFile(_graphVizFileModel.Lines);
-            _graphVizService.DisplayAutomaton();
+            _graphVizService.DisplayGraph();
 
             //create string for expressionModel.Binaryding with distinct values
             string distinctVariables = null;

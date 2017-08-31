@@ -46,7 +46,7 @@ namespace Ale1Project.Service
         {
             infix = "";
             flatNodeTree.Reverse();
-            
+
             InOrder(flatNodeTree[0], null);
             return infix;
         }
@@ -111,27 +111,28 @@ namespace Ale1Project.Service
         {
             var flatList = new List<NodeModel>();
             var stack = new Stack<NodeModel>();
+            int id = 0;
 
-            foreach (var c in prefixInput)
+            foreach (var val in prefixInput)
             {
-                if (_operatorService.IsOperator(c))
+                if (_operatorService.IsOperator(val))
                 {
                     NodeModel leftOperand = stack.Pop();
                     NodeModel rightOperand = stack.Pop();
-                    var node = new NodeModel(c, leftOperand, rightOperand);
+                    var node = new NodeModel(id++, val, leftOperand, rightOperand);
                     flatList.Add(node);
                     stack.Push(node);
                 }
-                else if (c.Equals(_operatorService.Not))
+                else if (val.Equals(_operatorService.Not))
                 {
                     NodeModel rightOperand = stack.Pop();
-                    var node = new NodeModel(c, rightOperand);
+                    var node = new NodeModel(id++, val, rightOperand);
                     flatList.Add(node);
                     stack.Push(node);
                 }
                 else
                 {
-                    var node = new NodeModel(c);
+                    var node = new NodeModel(id++, val);
                     flatList.Add(node);
                     stack.Push(node);
                 }
@@ -176,5 +177,5 @@ namespace Ale1Project.Service
         }
     }
 
-   
+
 }

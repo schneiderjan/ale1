@@ -12,31 +12,34 @@ namespace Ale1Project.Service
 {
     public class GraphVizService : IGraphVizService
     {
-        public void DisplayAutomaton()
+        public void DisplayGraph()
         {
             //Path to GrahpViz depends on Installation path!!!
-            ProcessStartInfo processStartInfo = new ProcessStartInfo();
-            processStartInfo.WorkingDirectory = @"C:\Program Files (x86)\Graphviz2.38\bin";
-            processStartInfo.FileName = @"C:\Program Files (x86)\Graphviz2.38\bin\dot.exe";
-            processStartInfo.Arguments = $"-Tpng -odot.png{System.IO.Directory.GetCurrentDirectory()} dot.dot";
-            processStartInfo.ErrorDialog = true;
-            processStartInfo.UseShellExecute = false;
-            processStartInfo.RedirectStandardError = true;
-            processStartInfo.RedirectStandardInput = true;
+            ProcessStartInfo processStartInfo = new ProcessStartInfo
+            {
+                WorkingDirectory = @"C:\Program Files (x86)\Graphviz2.38\bin",
+                FileName = @"C:\Program Files (x86)\Graphviz2.38\bin\dot.exe",
+                Arguments = $"-Tpng -odot.png {System.IO.Directory.GetCurrentDirectory()}\\dot.dot",
+                ErrorDialog = true,
+                UseShellExecute = false,
+                RedirectStandardError = true,
+                RedirectStandardInput = true
+            };
 
+            Debug.WriteLine(processStartInfo.Arguments);
             Process p = Process.Start(processStartInfo);
 
             Thread.Sleep(100);
             try
             {
                 ProcessStartInfo pictureProcessStartInfo = new ProcessStartInfo();
-                pictureProcessStartInfo.FileName = System.IO.Directory.GetCurrentDirectory() + "dot.png";
+                pictureProcessStartInfo.FileName = System.IO.Directory.GetCurrentDirectory() + "\\dot.png";
                 Process.Start(pictureProcessStartInfo);
             }
             catch (Win32Exception exception)
             {
                 Debug.WriteLine(exception.Message);
-                Debug.WriteLine("Cannot open file. A file with the same name is already opened.");
+                //Debug.WriteLine("Cannot open file. A file with the same name is already opened.");
             }
         }
 
@@ -46,18 +49,29 @@ namespace Ale1Project.Service
             file.Lines.Add("graph logic {");
             file.Lines.Add("node[fontname = \"Arial\"]");
 
-            RecursivelyAddLines(file, expressionModel);
+            var currentNode = expressionModel.TreeNodes.FirstOrDefault();
+            RecursivelyAddLines(file, currentNode);
 
             file.Lines.Add("}");
 
             return file;
         }
 
-        private void RecursivelyAddLines(GraphVizFileModel file, ExpressionModel expressionModel)
+        private void RecursivelyAddLines(GraphVizFileModel file, NodeModel currentNode)
         {
-            foreach (var treeNode in expressionModel.TreeNodes)
+            //Add node to graph
+            file.Lines.Add($"node{currentNode.Id} [ label = \"{currentNode.Value}\" ]");
+
+            //Add connection to childs
+            if (currentNode.LeftChild != null)
             {
-                Debug.WriteLine(treeNode.Value);
+                file.Lines.Add($"node{currentNode.Id} -- node{currentNode.LeftChild.Id}");
+                RecursivelyAddLines(file, currentNode.LeftChild);
+            }
+            if (currentNode.RightChild != null)
+            {
+                file.Lines.Add($"node{currentNode.Id} -- node{currentNode.RightChild.Id}");
+                RecursivelyAddLines(file, currentNode.RightChild);
             }
         }
     }
