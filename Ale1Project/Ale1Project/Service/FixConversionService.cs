@@ -61,7 +61,7 @@ namespace Ale1Project.Service
 
                 InOrder(rootNode.LeftChild, rootNode);
 
-                if (_operatorService.IsOperator(rootNode.Value) || rootNode.Value.Equals(_operatorService.Not)) _infix += ConvertAsciiReprentation(rootNode.Value);
+                if (_operatorService.IsOperator(rootNode.Value) || rootNode.Value.Equals(_operatorService.Not)) _infix += _operatorService.ConvertAsciiReprentation(rootNode.Value);
                 else _infix += rootNode.Value;
 
                 InOrder(rootNode.RightChild, rootNode);
@@ -72,40 +72,14 @@ namespace Ale1Project.Service
             {
                 InOrder(rootNode.LeftChild, rootNode);
 
-                if (_operatorService.IsOperator(rootNode.Value) || rootNode.Value.Equals(_operatorService.Not)) _infix += ConvertAsciiReprentation(rootNode.Value);
+                if (_operatorService.IsOperator(rootNode.Value) || rootNode.Value.Equals(_operatorService.Not)) _infix += _operatorService.ConvertAsciiReprentation(rootNode.Value);
                 else _infix += rootNode.Value;
 
                 InOrder(rootNode.RightChild, rootNode);
             }
         }
 
-        private string ConvertAsciiReprentation(string rootNodeValue)
-        {
-            var op = "";
-
-            switch (rootNodeValue)
-            {
-                case "~":
-                    op = "¬";
-                    break;
-                case "&":
-                    op = "⋀";
-                    break;
-                case "|":
-                    op = "⋁";
-                    break;
-                case ">":
-                    op = "⇒";
-                    break;
-                case "=":
-                    op = "⇔";
-                    break;
-                case "%":
-                    op = "%";
-                    break;
-            }
-            return op;
-        }
+        
 
         private List<NodeModel> GetTree(List<string> prefixInput)
         {

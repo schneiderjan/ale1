@@ -24,5 +24,32 @@ namespace Ale1Project.Service
             if (Operators.Contains(val)) return true;
             return false;
         }
+        public string ConvertAsciiReprentation(string rootNodeValue)
+        {
+            var op = string.Empty;
+
+            switch (rootNodeValue)
+            {
+                case "~":
+                    op = "¬";
+                    break;
+                case "&":
+                    op = "⋀";
+                    break;
+                case "|":
+                    op = "⋁";
+                    break;
+                case ">":
+                    op = "⇒";
+                    break;
+                case "=":
+                    op = "⇔";
+                    break;
+                case "%":
+                    op = "%";
+                    break;
+            }
+            return op;
+        }
     }
 }

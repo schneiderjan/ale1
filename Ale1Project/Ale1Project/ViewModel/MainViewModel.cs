@@ -15,6 +15,9 @@ namespace Ale1Project.ViewModel
     //&(=(A,B),|(C,D))
     //~(&(~(&(A,C)),~(&(~(B),C))))
 
+    //fix problems with hash
+    //|((|(A,(B)),C)
+
     /// <summary>
     /// This class contains properties that the main View can data expressionModel.Binaryd to.
     /// <para>
@@ -99,8 +102,10 @@ namespace Ale1Project.ViewModel
 
             //FOR DEBUGGING
             _expressionModel = new ExpressionModel();
-            Prefix = "&((|(A,~(B)),C)";
-            ExpressionModel.Prefix = "&((|(A,~(B)),C)";
+            Prefix = "|((|(A,(B)),C)";
+            //Prefix = "&((|(A,~(B)),C)";
+            ExpressionModel.Prefix = "|((|(A,(B)),C)";
+            //ExpressionModel.Prefix = "&((|(A,~(B)),C)";
 
             _fixConversionService = fixConversionService;
             _truthTableService = truthTableService;
@@ -115,14 +120,16 @@ namespace Ale1Project.ViewModel
 
         private void ParsePrefix()
         {
+            //Conversion to Infix and Distinct variables of expression
             Infix = _fixConversionService.ParsePrefix(ExpressionModel);
             _fixConversionService.GetDistinctVariables(ExpressionModel);
 
+            //Display Graph: create GraphVizFileModel, write to dot-file, create and open png-file of graph
             _graphVizFileModel = _graphVizService.ConvertExpressionModelToGraphVizFile(_expressionModel);
             _fileService.WriteGraphVizFileToDotFile(_graphVizFileModel.Lines);
             _graphVizService.DisplayGraph();
 
-            //create string for expressionModel.Binaryding with distinct values
+            //Create string for expressionModel.Binary with distinct values
             string distinctVariables = null;
             foreach (var c in _expressionModel.DistinctVariables)
             {
@@ -130,9 +137,11 @@ namespace Ale1Project.ViewModel
             }
             DistinctVariables = distinctVariables;
 
+            //Build truth table
             TruthTable = new ObservableCollection<string>(_truthTableService.GetTruthTable(_expressionModel));
             Hash = _truthTableService.CalculateHash(_expressionModel);
 
+            //Simplification of truth table
             SimplifiedTruthTable = new ObservableCollection<string>(_truthTableService.SimplifyTruthTable(_expressionModel));
 
             DisjunctiveNormalForm = _truthTableService.GetDisjunctiveNormalForm(_expressionModel);

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using Ale1Project.Model;
 
 namespace Ale1Project.Service
@@ -20,6 +21,8 @@ namespace Ale1Project.Service
         public List<string> GetTruthTable(ExpressionModel expressionModel)
         {
             expressionModel.TruthTable.Rows.Clear();
+            expressionModel.TruthTable.Binary = string.Empty;
+
             var header = expressionModel.DistinctVariables[0].ToString();
             for (var i = 1; i < expressionModel.DistinctVariables.Count; i++)
             {
@@ -61,7 +64,11 @@ namespace Ale1Project.Service
                 for (int j = 1; j < expressionModel.DistinctVariables.Count + 1; j++)
                 {
                     row = row + "\t" + values[i + j];
-                    if (j == expressionModel.DistinctVariables.Count) expressionModel.TruthTable.Binary += values[i + j];
+                    if (j == expressionModel.DistinctVariables.Count)
+                    {
+                        expressionModel.TruthTable.Binary += values[i + j];
+                    }
+
                 }
                 expressionModel.TruthTable.Rows.Add(row);
             }
@@ -257,19 +264,63 @@ namespace Ale1Project.Service
 
         public string GetDisjunctiveNormalForm(ExpressionModel expressionModel)
         {
-            foreach (var truthTableAnswer in expressionModel.TruthTable.Answers)
-            {
-                if (truthTableAnswer)
-                {
+            var disjunctiveNormalForm = string.Empty;
+            //loop distinct variables
+            //on each index check value.
 
-                }
-                else
+            for (var i = 1; i < expressionModel.TruthTable.Rows.Count; i++)
+            {
+                var truthTableRow = expressionModel.TruthTable.Rows[i];
+                var formula = string.Empty;
+
+                for (var index = 0; index < expressionModel.DistinctVariables.Count; index++)
                 {
-                    
+                    var variable = expressionModel.DistinctVariables[index];
+                    var value = truthTableRow[index];
+
+                    if (value.Equals('0'))
+                    {
+                        if (index == 0)
+                        {
+                            //make string: ( val AND
+                            formula = $"(¬{variable} ⋀";
+
+                        }
+                        else if (index == (expressionModel.DistinctVariables.Count - 1))
+                        {
+                            //make string: val )
+                            formula += $" ¬{variable})";
+                        }
+                        else
+                        {
+                            //make string: val AND
+                            formula += $" ¬{variable} ⋀";
+                        }
+                    }
+                    else
+                    {
+                        if (index == 0)
+                        {
+                            //make string: ( val AND
+                            formula = $"({variable} ⋀";
+
+                        }
+                        else if (index == (expressionModel.DistinctVariables.Count - 1))
+                        {
+                            //make string: val )
+                            formula += $" {variable})";
+                        }
+                        else
+                        {
+                            //make string: val AND
+                            formula += $" {variable} ⋀";
+                        }
+                    }
                 }
             }
 
-            return "";
+
+            return disjunctiveNormalForm;
         }
     }
 }

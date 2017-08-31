@@ -11,7 +11,7 @@ namespace Ale1Project.Service
         string Not { get; }
         List<string> Operators { get; }
         bool IsOperator(string val);
-
+        string ConvertAsciiReprentation(string rootNodeValue);
 
 
     }
