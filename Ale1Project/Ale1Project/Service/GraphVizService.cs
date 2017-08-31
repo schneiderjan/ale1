@@ -19,7 +19,7 @@ namespace Ale1Project.Service
             {
                 WorkingDirectory = @"C:\Program Files (x86)\Graphviz2.38\bin",
                 FileName = @"C:\Program Files (x86)\Graphviz2.38\bin\dot.exe",
-                Arguments = $"-Tpng -odot.png {System.IO.Directory.GetCurrentDirectory()}\\dot.dot",
+                Arguments = $"-Tpng -o{System.IO.Directory.GetCurrentDirectory()}\\dot.png {System.IO.Directory.GetCurrentDirectory()}\\dot.dot",
                 ErrorDialog = true,
                 UseShellExecute = false,
                 RedirectStandardError = true,

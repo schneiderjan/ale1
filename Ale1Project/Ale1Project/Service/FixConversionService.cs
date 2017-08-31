@@ -10,8 +10,8 @@ namespace Ale1Project.Service
 {
     public class FixConversionService : IFixConversionService
     {
-        private string infix;
-        private IOperatorService _operatorService;
+        private string _infix;
+        private readonly IOperatorService _operatorService;
 
         public FixConversionService(IOperatorService operatorService)
         {
@@ -44,11 +44,11 @@ namespace Ale1Project.Service
 
         private string ConvertNodesToInfix(List<NodeModel> flatNodeTree)
         {
-            infix = "";
+            _infix = "";
             flatNodeTree.Reverse();
 
             InOrder(flatNodeTree[0], null);
-            return infix;
+            return _infix;
         }
 
         private void InOrder(NodeModel rootNode, NodeModel previousNode)
@@ -57,23 +57,23 @@ namespace Ale1Project.Service
 
             if (previousNode != null && rootNode.RightChild != null)
             {
-                infix = infix + "( ";
+                _infix = _infix + "( ";
 
                 InOrder(rootNode.LeftChild, rootNode);
 
-                if (_operatorService.IsOperator(rootNode.Value) || rootNode.Value.Equals(_operatorService.Not)) infix += ConvertAsciiReprentation(rootNode.Value);
-                else infix += rootNode.Value;
+                if (_operatorService.IsOperator(rootNode.Value) || rootNode.Value.Equals(_operatorService.Not)) _infix += ConvertAsciiReprentation(rootNode.Value);
+                else _infix += rootNode.Value;
 
                 InOrder(rootNode.RightChild, rootNode);
 
-                infix = infix + " )";
+                _infix = _infix + " )";
             }
             else
             {
                 InOrder(rootNode.LeftChild, rootNode);
 
-                if (_operatorService.IsOperator(rootNode.Value) || rootNode.Value.Equals(_operatorService.Not)) infix += ConvertAsciiReprentation(rootNode.Value);
-                else infix += rootNode.Value;
+                if (_operatorService.IsOperator(rootNode.Value) || rootNode.Value.Equals(_operatorService.Not)) _infix += ConvertAsciiReprentation(rootNode.Value);
+                else _infix += rootNode.Value;
 
                 InOrder(rootNode.RightChild, rootNode);
             }
