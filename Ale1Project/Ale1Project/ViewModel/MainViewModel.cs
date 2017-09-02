@@ -15,8 +15,12 @@ namespace Ale1Project.ViewModel
     //&(=(A,B),|(C,D))
     //~(&(~(&(A,C)),~(&(~(B),C))))
 
+    //tautology
+    //|(>(p,q),>(q,p)) 
+
     //fix problems with hash
     //|((|(A,(B)),C)
+    //&(&(p,q),~(p))
 
     /// <summary>
     /// This class contains properties that the main View can data expressionModel.Binaryd to.

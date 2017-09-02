@@ -267,10 +267,16 @@ namespace Ale1Project.Service
             var disjunctiveNormalForm = string.Empty;
             //loop distinct variables
             //on each index check value.
-
-            for (var i = 1; i < expressionModel.TruthTable.Rows.Count; i++)
+            var tableRowsWithoutTabs = new List<string>();
+            foreach (var truthTableRow in expressionModel.TruthTable.Rows)
             {
-                var truthTableRow = expressionModel.TruthTable.Rows[i];
+                tableRowsWithoutTabs.Add(Regex.Replace(truthTableRow, @"\t", ""));
+            }
+
+
+            for (var i = 1; i < tableRowsWithoutTabs.Count; i++)
+            {
+                var truthTableRow = tableRowsWithoutTabs[i];
                 var formula = string.Empty;
 
                 for (var index = 0; index < expressionModel.DistinctVariables.Count; index++)
@@ -316,6 +322,16 @@ namespace Ale1Project.Service
                             formula += $" {variable} ⋀";
                         }
                     }
+                }
+
+
+                if (i == tableRowsWithoutTabs.Count-1)
+                {
+                    disjunctiveNormalForm += formula;
+                }
+                else
+                {
+                    disjunctiveNormalForm += formula + " ⋁ ";
                 }
             }
 
