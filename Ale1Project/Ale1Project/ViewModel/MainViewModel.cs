@@ -12,15 +12,15 @@ namespace Ale1Project.ViewModel
     //"&((|(A,~(B)),C)"
     //"=( >(A,B), |( ~(A) ,B) ) 
     //&(A, ~(B))
-    //&(=(A,B),|(C,D))
     //~(&(~(&(A,C)),~(&(~(B),C))))
+    //|((|(A,(B)),C)
+    //&(&(p,q),~(p))
 
     //tautology
     //|(>(p,q),>(q,p)) 
 
-    //fix problems with hash
-    //|((|(A,(B)),C)
-    //&(&(p,q),~(p))
+    //use for simplification of truth table
+    //&(=(A,B),|(C,D)) 
 
     /// <summary>
     /// This class contains properties that the main View can data expressionModel.Binaryd to.
@@ -106,10 +106,10 @@ namespace Ale1Project.ViewModel
 
             //FOR DEBUGGING
             _expressionModel = new ExpressionModel();
-            Prefix = "|((|(A,(B)),C)";
-            //Prefix = "&((|(A,~(B)),C)";
-            ExpressionModel.Prefix = "|((|(A,(B)),C)";
-            //ExpressionModel.Prefix = "&((|(A,~(B)),C)";
+            //Prefix = "|((|(A,(B)),C)";
+            Prefix = "&((|(A,~(B)),C)";
+            //ExpressionModel.Prefix = "|((|(A,(B)),C)";
+            ExpressionModel.Prefix = "&((|(A,~(B)),C)";
 
             _fixConversionService = fixConversionService;
             _truthTableService = truthTableService;
@@ -148,6 +148,7 @@ namespace Ale1Project.ViewModel
             //Simplification of truth table
             SimplifiedTruthTable = new ObservableCollection<string>(_truthTableService.SimplifyTruthTable(_expressionModel));
 
+            //Disjuntive normal form of input
             DisjunctiveNormalForm = _truthTableService.GetDisjunctiveNormalForm(_expressionModel);
         }
 

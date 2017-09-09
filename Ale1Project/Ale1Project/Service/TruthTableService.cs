@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -135,6 +136,10 @@ namespace Ale1Project.Service
             }
         }
 
+        //Note assignment 3 (06.09.17):
+        //calculate the same hash for the simplified truth table
+        //reverse simplification of table by looking at the stars
+        //each star indicates 2^* lines need to be added.
         public string CalculateHash(ExpressionModel expressionModel)
         {
             char[] charArray = expressionModel.TruthTable.Binary.ToCharArray();
@@ -264,7 +269,10 @@ namespace Ale1Project.Service
 
         public string GetDisjunctiveNormalForm(ExpressionModel expressionModel)
         {
+            //makes sure that prefix AND for any row has proper syntax.
+            //aka. if you have variables ABC then one row is |(&(&(A,B),C)) with OR
             var disjunctiveNormalForm = string.Empty;
+            var formulas = new List<string>();
             //loop distinct variables
             //on each index check value.
             var tableRowsWithoutTabs = new List<string>();
@@ -273,70 +281,133 @@ namespace Ale1Project.Service
                 tableRowsWithoutTabs.Add(Regex.Replace(truthTableRow, @"\t", ""));
             }
 
-
+            int counter;
             for (var i = 1; i < tableRowsWithoutTabs.Count; i++)
             {
                 var truthTableRow = tableRowsWithoutTabs[i];
                 var formula = string.Empty;
+                //makes sure that prefix AND for any row has proper syntax.
+                //aka. if you have variables ABC then one row is |(&(&(A,B),C)) with OR
+                //~ if variablecount > 2 need to additional AND
+                counter = 0;
+
+                var answer = truthTableRow[truthTableRow.Length - 1];
+                if (answer.Equals('0')) continue;
 
                 for (var index = 0; index < expressionModel.DistinctVariables.Count; index++)
                 {
                     var variable = expressionModel.DistinctVariables[index];
                     var value = truthTableRow[index];
 
-                    if (value.Equals('0'))
+
+                    if (formula == string.Empty)
                     {
-                        if (index == 0)
-                        {
-                            //make string: ( val AND
-                            formula = $"(¬{variable} ⋀";
-
-                        }
-                        else if (index == (expressionModel.DistinctVariables.Count - 1))
-                        {
-                            //make string: val )
-                            formula += $" ¬{variable})";
-                        }
-                        else
-                        {
-                            //make string: val AND
-                            formula += $" ¬{variable} ⋀";
-                        }
+                        formula = $"&(";
                     }
-                    else
+
+                    formula = AddVariableToFormula(counter, value, formula, variable);
+                    counter++;
+
+                    if (index == expressionModel.DistinctVariables.Count - 1)
                     {
-                        if (index == 0)
-                        {
-                            //make string: ( val AND
-                            formula = $"({variable} ⋀";
-
-                        }
-                        else if (index == (expressionModel.DistinctVariables.Count - 1))
-                        {
-                            //make string: val )
-                            formula += $" {variable})";
-                        }
-                        else
-                        {
-                            //make string: val AND
-                            formula += $" {variable} ⋀";
-                        }
+                        formulas.Add(formula);
                     }
-                }
-
-
-                if (i == tableRowsWithoutTabs.Count-1)
-                {
-                    disjunctiveNormalForm += formula;
-                }
-                else
-                {
-                    disjunctiveNormalForm += formula + " ⋁ ";
                 }
             }
 
+            counter = 0;
+            foreach (var formula in formulas)
+            {
+                if (counter == 0)
+                {
+                    disjunctiveNormalForm = $"|({formula}";
+                }
+                else if (counter == 1)
+                {
+                    disjunctiveNormalForm += $"), {formula}";
+                }
+                //else if (counter == formulas.Count - 1)
+                //{
+                //    disjunctiveNormalForm += $"), {formula})";
+                //}
+                else
+                {
+                    disjunctiveNormalForm = disjunctiveNormalForm.Insert(0, "|(");
+                    disjunctiveNormalForm += $"),{formula}";
+                }
+                counter++;
+            }
+            disjunctiveNormalForm += ")";
 
+            expressionModel.DisjunctiveNormalForm = disjunctiveNormalForm;
             return disjunctiveNormalForm;
         }
+
+        private string AddVariableToFormula(int counter, char value, string formula, char variable)
+        {
+            if (counter == 0)
+            {
+                if (value.Equals('0'))
+                {
+                    formula += $"~{variable},";
+                }
+                else
+                {
+                    formula += $"{variable},";
+                }
+            }
+            else if (counter == 1)
+            {
+                if (value.Equals('0'))
+                {
+                    formula += $"~{variable})";
+                }
+                else
+                {
+                    formula += $"{variable})";
+                }
+            }
+            else //counter 2
+            {
+                formula = formula.Insert(0, "&(");
+
+                if (value.Equals('0'))
+                {
+                    formula += $",~{variable})";
+                }
+                else
+                {
+                    formula += $",{variable})";
+                }
+            }
+            return formula;
+        }
+
+        //public string GetDisjunctiveNormalFormPrefix(ExpressionModel expressionModel)
+        //{
+        //    string disjunctiveNormalForm = string.Empty;
+
+        //    var tableRowsWithoutTabs = new List<string>();
+        //    foreach (var truthTableRow in expressionModel.TruthTable.Rows)
+        //    {
+        //        tableRowsWithoutTabs.Add(Regex.Replace(truthTableRow, @"\t", ""));
+        //    }
+
+
+        //    for (var i = 1; i < tableRowsWithoutTabs.Count; i++)
+        //    {
+        //        var truthTableRow = tableRowsWithoutTabs[i];
+        //        var formula = string.Empty;
+
+        //        for (var index = 0; index < expressionModel.DistinctVariables.Count; index++)
+        //        {
+        //            var variable = expressionModel.DistinctVariables[index];
+        //            var value = truthTableRow[index];
+
+        //        }
+        //    }
+
+        //    return disjunctiveNormalForm;
+        //}
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -87,29 +88,36 @@ namespace Ale1Project.Service
             var stack = new Stack<NodeModel>();
             int id = 0;
 
-            foreach (var val in prefixInput)
+            try
             {
-                if (_operatorService.IsOperator(val))
+                foreach (var val in prefixInput)
                 {
-                    NodeModel leftOperand = stack.Pop();
-                    NodeModel rightOperand = stack.Pop();
-                    var node = new NodeModel(id++, val, leftOperand, rightOperand);
-                    flatList.Add(node);
-                    stack.Push(node);
+                    if (_operatorService.IsOperator(val))
+                    {
+                        NodeModel leftOperand = stack.Pop();
+                        NodeModel rightOperand = stack.Pop();
+                        var node = new NodeModel(id++, val, leftOperand, rightOperand);
+                        flatList.Add(node);
+                        stack.Push(node);
+                    }
+                    else if (val.Equals(_operatorService.Not))
+                    {
+                        NodeModel rightOperand = stack.Pop();
+                        var node = new NodeModel(id++, val, rightOperand);
+                        flatList.Add(node);
+                        stack.Push(node);
+                    }
+                    else
+                    {
+                        var node = new NodeModel(id++, val);
+                        flatList.Add(node);
+                        stack.Push(node);
+                    }
                 }
-                else if (val.Equals(_operatorService.Not))
-                {
-                    NodeModel rightOperand = stack.Pop();
-                    var node = new NodeModel(id++, val, rightOperand);
-                    flatList.Add(node);
-                    stack.Push(node);
-                }
-                else
-                {
-                    var node = new NodeModel(id++, val);
-                    flatList.Add(node);
-                    stack.Push(node);
-                }
+            }
+            catch (InvalidOperationException e)
+            {
+                Debug.WriteLine(e.Message);
             }
             return flatList;
         }
