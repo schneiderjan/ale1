@@ -382,32 +382,9 @@ namespace Ale1Project.Service
             }
             return formula;
         }
-
-        //public string GetDisjunctiveNormalFormPrefix(ExpressionModel expressionModel)
-        //{
-        //    string disjunctiveNormalForm = string.Empty;
-
-        //    var tableRowsWithoutTabs = new List<string>();
-        //    foreach (var truthTableRow in expressionModel.TruthTable.Rows)
-        //    {
-        //        tableRowsWithoutTabs.Add(Regex.Replace(truthTableRow, @"\t", ""));
-        //    }
-
-
-        //    for (var i = 1; i < tableRowsWithoutTabs.Count; i++)
-        //    {
-        //        var truthTableRow = tableRowsWithoutTabs[i];
-        //        var formula = string.Empty;
-
-        //        for (var index = 0; index < expressionModel.DistinctVariables.Count; index++)
-        //        {
-        //            var variable = expressionModel.DistinctVariables[index];
-        //            var value = truthTableRow[index];
-
-        //        }
-        //    }
-
-        //    return disjunctiveNormalForm;
-        //}
+        public string GetDisjunctiveNormalFormSimplified(ExpressionModel expressionModel)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

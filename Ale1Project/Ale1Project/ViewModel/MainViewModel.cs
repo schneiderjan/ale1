@@ -34,15 +34,20 @@ namespace Ale1Project.ViewModel
         private readonly ITruthTableService _truthTableService;
         private readonly IGraphVizService _graphVizService;
         private readonly IFileService _fileService;
+        private readonly ExpressionModel _expressionModel;
+        private readonly ExpressionModel _expressionModelDisjunctiveNormalForm;
+
         private ObservableCollection<string> _truthTable = new ObservableCollection<string>();
+        private ObservableCollection<string> _simplifiedTruthTable = new ObservableCollection<string>();
+
+        private GraphVizFileModel _graphVizFileModel;
+
         private string _prefix;
         private string _infix;
         private string _distinctVariables;
-        private ExpressionModel _expressionModel;
-        private GraphVizFileModel _graphVizFileModel;
         private string _hash;
-        private ObservableCollection<string> _simplifiedTruthTable = new ObservableCollection<string>();
         private string _disjunctiveNormalForm;
+        private string _hashDisjunctiveNormalForm;
 
         public string DisjunctiveNormalForm
         {
@@ -56,7 +61,7 @@ namespace Ale1Project.ViewModel
             set
             {
                 _prefix = value;
-                ExpressionModel.Prefix = value;
+                _expressionModel.Prefix = value;
                 RaisePropertyChanged();
                 ParsePrefixCommand.RaiseCanExecuteChanged();
             }
@@ -70,14 +75,8 @@ namespace Ale1Project.ViewModel
 
         public string Infix
         {
-            get { return ExpressionModel.Infix; }
+            get { return _expressionModel.Infix; }
             set { _infix = value; RaisePropertyChanged(); }
-        }
-
-        public ExpressionModel ExpressionModel
-        {
-            get { return _expressionModel; }
-            set { _expressionModel = value; RaisePropertyChanged(); }
         }
 
         public RelayCommand ParsePrefixCommand { get; set; }
@@ -100,16 +99,24 @@ namespace Ale1Project.ViewModel
             set { _simplifiedTruthTable = value; RaisePropertyChanged(); }
         }
 
+        public string HashDisjunctiveNormalForm
+        {
+            get { return _hashDisjunctiveNormalForm; }
+            set { _hashDisjunctiveNormalForm = value; RaisePropertyChanged(); }
+        }
+
         public MainViewModel(IFixConversionService fixConversionService, ITruthTableService truthTableService, IGraphVizService graphVizService, IFileService fileService)
         {
             ParsePrefixCommand = new RelayCommand(ParsePrefix, ParseCanExecute);
+
+            _expressionModelDisjunctiveNormalForm = new ExpressionModel();
 
             //FOR DEBUGGING
             _expressionModel = new ExpressionModel();
             //Prefix = "|((|(A,(B)),C)";
             Prefix = "&((|(A,~(B)),C)";
             //ExpressionModel.Prefix = "|((|(A,(B)),C)";
-            ExpressionModel.Prefix = "&((|(A,~(B)),C)";
+            _expressionModel.Prefix = "&((|(A,~(B)),C)";
 
             _fixConversionService = fixConversionService;
             _truthTableService = truthTableService;
@@ -125,8 +132,8 @@ namespace Ale1Project.ViewModel
         private void ParsePrefix()
         {
             //Conversion to Infix and Distinct variables of expression
-            Infix = _fixConversionService.ParsePrefix(ExpressionModel);
-            _fixConversionService.GetDistinctVariables(ExpressionModel);
+            Infix = _fixConversionService.ParsePrefix(_expressionModel);
+            _fixConversionService.GetDistinctVariables(_expressionModel);
 
             //Display Graph: create GraphVizFileModel, write to dot-file, create and open png-file of graph
             _graphVizFileModel = _graphVizService.ConvertExpressionModelToGraphVizFile(_expressionModel);
@@ -150,6 +157,15 @@ namespace Ale1Project.ViewModel
 
             //Disjuntive normal form of input
             DisjunctiveNormalForm = _truthTableService.GetDisjunctiveNormalForm(_expressionModel);
+            _expressionModelDisjunctiveNormalForm.Prefix = DisjunctiveNormalForm;
+            _expressionModelDisjunctiveNormalForm.DistinctVariables = _expressionModel.DistinctVariables;
+
+            //Calculate truth table and parse infix of DNF
+            _fixConversionService.ParsePrefix(_expressionModelDisjunctiveNormalForm);
+            _truthTableService.GetTruthTable(_expressionModelDisjunctiveNormalForm);
+
+            //Get hash of DNF
+            HashDisjunctiveNormalForm = _truthTableService.CalculateHash(_expressionModelDisjunctiveNormalForm);
         }
 
     }

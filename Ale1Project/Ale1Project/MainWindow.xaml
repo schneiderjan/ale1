@@ -95,12 +95,12 @@
                     Grid.Column="2"
                     Width="50"
                     Content="Disj." />
-                <TextBox Grid.Column="3" Text="{Binding HashDisj}" />
+                <TextBox Grid.Column="3" Text="{Binding HashDisjunctiveNormalForm}" />
                 <Label
                     Grid.Column="4"
                     Width="50"
                     Content="Disj. sim." />
-                <TextBox Grid.Column="5" Text="{Binding HashDisjSimplified}" />
+                <TextBox Grid.Column="5" Text="{Binding HashDisjunctiveNormalFormSimplified}" />
                 <Label
                     Grid.Column="6"
                     Width="50"
