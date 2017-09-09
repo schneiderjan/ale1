@@ -166,6 +166,9 @@ namespace Ale1Project.ViewModel
 
             //Get hash of DNF
             HashDisjunctiveNormalForm = _truthTableService.CalculateHash(_expressionModelDisjunctiveNormalForm);
+            _graphVizFileModel = _graphVizService.ConvertExpressionModelToGraphVizFile(_expressionModelDisjunctiveNormalForm);
+            _fileService.WriteGraphVizFileToDotFile(_graphVizFileModel.Lines);
+            _graphVizService.DisplayGraph();
         }
 
     }
