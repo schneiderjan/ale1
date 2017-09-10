@@ -269,6 +269,8 @@ namespace Ale1Project.Service
 
         public string GetDisjunctiveNormalForm(ExpressionModel expressionModel)
         {
+            //PART 1 Extract all formulas out truth table
+
             //makes sure that prefix AND for any row has proper syntax.
             //aka. if you have variables ABC then one row is |(&(&(A,B),C)) with OR
             int counter;
@@ -315,6 +317,8 @@ namespace Ale1Project.Service
                 }
             }
 
+
+            //PART 2 Add OR operator to all formulas and create disjunctive normal form
             counter = 0;
             foreach (var formula in formulas)
             {
