@@ -271,6 +271,7 @@ namespace Ale1Project.Service
         {
             //makes sure that prefix AND for any row has proper syntax.
             //aka. if you have variables ABC then one row is |(&(&(A,B),C)) with OR
+            int counter;
             var disjunctiveNormalForm = string.Empty;
             var formulas = new List<string>();
             //loop distinct variables
@@ -281,7 +282,6 @@ namespace Ale1Project.Service
                 tableRowsWithoutTabs.Add(Regex.Replace(truthTableRow, @"\t", ""));
             }
 
-            int counter;
             for (var i = 1; i < tableRowsWithoutTabs.Count; i++)
             {
                 var truthTableRow = tableRowsWithoutTabs[i];
