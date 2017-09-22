@@ -11,5 +11,6 @@ namespace Ale1Project.Service
     {
         string ParsePrefix(ExpressionModel expressionModel);
         void GetDistinctVariables(ExpressionModel expressionModel);
+        string GetNandForm(ExpressionModel expressionModel);
     }
 }

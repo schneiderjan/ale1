@@ -36,6 +36,7 @@ namespace Ale1Project.ViewModel
         private readonly IFileService _fileService;
         private readonly ExpressionModel _expressionModel;
         private readonly ExpressionModel _expressionModelDisjunctiveNormalForm;
+        private readonly ExpressionModel _expressionModelSimplifiedDisjunctiveNormalForm;
 
         private ObservableCollection<string> _truthTable = new ObservableCollection<string>();
         private ObservableCollection<string> _simplifiedTruthTable = new ObservableCollection<string>();
@@ -110,6 +111,7 @@ namespace Ale1Project.ViewModel
             ParsePrefixCommand = new RelayCommand(ParsePrefix, ParseCanExecute);
 
             _expressionModelDisjunctiveNormalForm = new ExpressionModel();
+            _expressionModelSimplifiedDisjunctiveNormalForm = new ExpressionModel();
 
             //FOR DEBUGGING
             _expressionModel = new ExpressionModel();
