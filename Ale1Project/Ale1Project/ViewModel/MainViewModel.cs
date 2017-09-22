@@ -49,11 +49,18 @@ namespace Ale1Project.ViewModel
         private string _hash;
         private string _disjunctiveNormalForm;
         private string _hashDisjunctiveNormalForm;
+        private string _simplifiedDisjunctiveNormalForm;
 
         public string DisjunctiveNormalForm
         {
             get { return _disjunctiveNormalForm; }
             set { _disjunctiveNormalForm = value; RaisePropertyChanged(); }
+        }
+
+        public string SimplifiedDisjunctiveNormalForm
+        {
+            get { return _simplifiedDisjunctiveNormalForm; }
+            set { _simplifiedDisjunctiveNormalForm = value; RaisePropertyChanged(); }
         }
 
         public string Prefix
@@ -171,6 +178,11 @@ namespace Ale1Project.ViewModel
             _graphVizFileModel = _graphVizService.ConvertExpressionModelToGraphVizFile(_expressionModelDisjunctiveNormalForm);
             _fileService.WriteGraphVizFileToDotFile(_graphVizFileModel.Lines);
             _graphVizService.DisplayGraph();
+
+            //Simplified Disjunctive normal form of input
+            SimplifiedDisjunctiveNormalForm = _truthTableService.GetSimplifiedDisjunctiveNormalForm(_expressionModel);
+            _expressionModelSimplifiedDisjunctiveNormalForm.Prefix = SimplifiedDisjunctiveNormalForm;
+            _expressionModelSimplifiedDisjunctiveNormalForm.DistinctVariables = _expressionModel.DistinctVariables;
         }
 
     }

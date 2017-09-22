@@ -386,9 +386,92 @@ namespace Ale1Project.Service
             }
             return formula;
         }
-        public string GetDisjunctiveNormalFormSimplified(ExpressionModel expressionModel)
+
+
+        public string GetSimplifiedDisjunctiveNormalForm(ExpressionModel expressionModel)
         {
-            throw new NotImplementedException();
+            //PART 1 Extract all formulas out truth table
+
+            //makes sure that prefix AND for any row has proper syntax.
+            //aka. if you have variables ABC then one row is |(&(&(A,B),C)) with OR
+            int counter = 0;
+            var simplifiedDisjunctiveNormalForm = string.Empty;
+            var formulas = new List<string>();
+            //loop distinct variables
+            //on each index check value.
+            var tableRowsWithoutTabs = new List<string>();
+            foreach (var truthTableRow in expressionModel.TruthTable.RowsSimplified)
+            {
+                var row = Regex.Replace(truthTableRow, @"\t", "");
+                if (row.Last() == '1')
+                {
+                    tableRowsWithoutTabs.Add(row);
+                }
+            }
+
+            foreach (var truthTableRow in tableRowsWithoutTabs)
+            {
+                for (var innerIndex = 0; innerIndex < expressionModel.DistinctVariables.Count; innerIndex++)
+                {
+                    var value = truthTableRow[innerIndex];
+                    var variable = expressionModel.DistinctVariables[innerIndex];
+
+                    simplifiedDisjunctiveNormalForm = AddVariableToDisjunctiveNormalForm(value, ref counter, variable, simplifiedDisjunctiveNormalForm);
+                }
+            }
+            return simplifiedDisjunctiveNormalForm;
+        }
+
+        private string AddVariableToDisjunctiveNormalForm(char value, ref int counter, char variable,
+            string simplifiedDisjunctiveNormalForm)
+        {
+            if (value.Equals('1'))
+            {
+                if (counter.Equals(0))
+                {
+                    //add or and first half,
+                    //|(A, ... 
+                    simplifiedDisjunctiveNormalForm += $"|({variable},";
+                }
+                else if (counter.Equals(1))
+                {
+                    //add second half,
+                    //|(A,B)
+                    simplifiedDisjunctiveNormalForm += $"{variable})";
+                }
+                else //everything above 1
+                {
+                    //Add additional OR's
+                    //|(| ... (A,B),C, ... )
+                    simplifiedDisjunctiveNormalForm = simplifiedDisjunctiveNormalForm.Insert(0, "|(");
+                    simplifiedDisjunctiveNormalForm += $",{variable})";
+                }
+                counter++;
+            }
+            else if (value.Equals('0'))
+            {
+                if (counter.Equals(0))
+                {
+                    //add or and first half,
+                    //|(A, ... 
+                    simplifiedDisjunctiveNormalForm += $"|(~{variable},";
+                }
+                else if (counter.Equals(1))
+                {
+                    //add second half,
+                    //|(A,B)
+                    simplifiedDisjunctiveNormalForm += $"~{variable})";
+                }
+                else //everything above 1
+                {
+                    //Add additional OR's
+                    //|(| ... (A,B),C, ... )
+                    simplifiedDisjunctiveNormalForm = simplifiedDisjunctiveNormalForm.Insert(0, "|(");
+                    simplifiedDisjunctiveNormalForm += $",~{variable})";
+                }
+                counter++;
+            }
+            return simplifiedDisjunctiveNormalForm;
         }
     }
 }

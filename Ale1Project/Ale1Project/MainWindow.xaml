@@ -129,7 +129,7 @@
                     Grid.Column="0"
                     Width="50"
                     Content="Disj. Sim." />
-                <TextBox Grid.Column="1" Text="{Binding DisjunctiveNormalFormSimplified}" />
+                <TextBox Grid.Column="1" Text="{Binding SimplifiedDisjunctiveNormalForm}" />
             </Grid>
 
             <Grid Grid.Row="6" Margin="0,2,5,2">

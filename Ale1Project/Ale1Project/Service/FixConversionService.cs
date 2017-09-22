@@ -151,6 +151,11 @@ namespace Ale1Project.Service
             }
         }
 
+        public string GetNandForm(ExpressionModel expressionModel)
+        {
+            throw new NotImplementedException();
+        }
+
         private string Alphabetize(string s)
         {
             char[] a = s.ToCharArray();
