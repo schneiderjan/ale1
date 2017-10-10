@@ -390,8 +390,6 @@ namespace Ale1Project.Service
 
         public string GetSimplifiedDisjunctiveNormalForm(ExpressionModel expressionModel)
         {
-            //PART 1 Extract all formulas out truth table
-
             //makes sure that prefix AND for any row has proper syntax.
             //aka. if you have variables ABC then one row is |(&(&(A,B),C)) with OR
             int counter = 0;

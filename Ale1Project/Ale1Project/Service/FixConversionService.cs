@@ -12,6 +12,7 @@ namespace Ale1Project.Service
     public class FixConversionService : IFixConversionService
     {
         private string _infix;
+        private string _nand;
         private readonly IOperatorService _operatorService;
 
         public FixConversionService(IOperatorService operatorService)
@@ -45,7 +46,7 @@ namespace Ale1Project.Service
 
         private string ConvertNodesToInfix(List<NodeModel> flatNodeTree)
         {
-            _infix = "";
+            _infix = string.Empty;
             flatNodeTree.Reverse();
 
             InOrder(flatNodeTree[0], null);
@@ -62,9 +63,14 @@ namespace Ale1Project.Service
 
                 InOrder(rootNode.LeftChild, rootNode);
 
-                if (_operatorService.IsOperator(rootNode.Value) || rootNode.Value.Equals(_operatorService.Not)) _infix += _operatorService.ConvertAsciiReprentation(rootNode.Value);
-                else _infix += rootNode.Value;
-
+                if (_operatorService.IsOperator(rootNode.Value) || rootNode.Value.Equals(_operatorService.Not))
+                {
+                    _infix += _operatorService.ConvertAsciiReprentation(rootNode.Value);
+                }
+                else
+                {
+                    _infix += rootNode.Value;
+                }
                 InOrder(rootNode.RightChild, rootNode);
 
                 _infix = _infix + " )";
@@ -80,7 +86,7 @@ namespace Ale1Project.Service
             }
         }
 
-        
+
 
         private List<NodeModel> GetTree(List<string> prefixInput)
         {
@@ -153,7 +159,47 @@ namespace Ale1Project.Service
 
         public string GetNandForm(ExpressionModel expressionModel)
         {
-            throw new NotImplementedException();
+            string _nand = string.Empty;
+            //p or q == ~p % ~q
+            //p and q == p % q
+            //p => q == p % ~q
+            //p <=> q == (p % q) % (~p % ~q)
+            //~p == p % p
+
+
+            ConvertNodesToNand(expressionModel.TreeNodes[0], null);
+
+            expressionModel.Nand = _nand;
+            return _nand;
+        }
+
+        private void ConvertNodesToNand(NodeModel currentNode, NodeModel previousNode)
+        {
+            if (currentNode == null) return;
+
+            if (previousNode != null && currentNode.RightChild != null)
+            {
+
+
+                if (_operatorService.IsOperator(currentNode.Value) || currentNode.Value.Equals(_operatorService.Not))
+                {
+                }
+                else
+                {
+                }
+
+
+            }
+            else
+            {
+
+                if (_operatorService.IsOperator(currentNode.Value) || currentNode.Value.Equals(_operatorService.Not))
+                {
+                }
+                else
+                {
+                }
+            }
         }
 
         private string Alphabetize(string s)

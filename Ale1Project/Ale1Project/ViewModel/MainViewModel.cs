@@ -37,6 +37,8 @@ namespace Ale1Project.ViewModel
         private readonly ExpressionModel _expressionModel;
         private readonly ExpressionModel _expressionModelDisjunctiveNormalForm;
         private readonly ExpressionModel _expressionModelSimplifiedDisjunctiveNormalForm;
+        private readonly ExpressionModel _expressionModelNand;
+
 
         private ObservableCollection<string> _truthTable = new ObservableCollection<string>();
         private ObservableCollection<string> _simplifiedTruthTable = new ObservableCollection<string>();
@@ -50,6 +52,27 @@ namespace Ale1Project.ViewModel
         private string _disjunctiveNormalForm;
         private string _hashDisjunctiveNormalForm;
         private string _simplifiedDisjunctiveNormalForm;
+        private string _hashDisjunctiveNormalFormSimplified;
+        private string _nand;
+        private string _hashNand;
+
+        public string HashNand
+        {
+            get { return _hashNand; }
+            set { _hashNand = value; RaisePropertyChanged(); }
+        }
+
+        public string Nand
+        {
+            get { return _nand; }
+            set { _nand = value; RaisePropertyChanged(); }
+        }
+
+        public string HashDisjunctiveNormalFormSimplified
+        {
+            get { return _hashDisjunctiveNormalFormSimplified; }
+            set { _hashDisjunctiveNormalFormSimplified = value; RaisePropertyChanged(); }
+        }
 
         public string DisjunctiveNormalForm
         {
@@ -119,6 +142,7 @@ namespace Ale1Project.ViewModel
 
             _expressionModelDisjunctiveNormalForm = new ExpressionModel();
             _expressionModelSimplifiedDisjunctiveNormalForm = new ExpressionModel();
+            _expressionModelNand = new ExpressionModel();
 
             //FOR DEBUGGING
             _expressionModel = new ExpressionModel();
@@ -183,6 +207,19 @@ namespace Ale1Project.ViewModel
             SimplifiedDisjunctiveNormalForm = _truthTableService.GetSimplifiedDisjunctiveNormalForm(_expressionModel);
             _expressionModelSimplifiedDisjunctiveNormalForm.Prefix = SimplifiedDisjunctiveNormalForm;
             _expressionModelSimplifiedDisjunctiveNormalForm.DistinctVariables = _expressionModel.DistinctVariables;
+
+            //Calculate truth table and parse infix of Simpl. DNF
+            _fixConversionService.ParsePrefix(_expressionModelSimplifiedDisjunctiveNormalForm);
+            _truthTableService.GetTruthTable(_expressionModelSimplifiedDisjunctiveNormalForm);
+
+            //Get hash of Simpl. DNF
+            HashDisjunctiveNormalFormSimplified = _truthTableService.CalculateHash(_expressionModelSimplifiedDisjunctiveNormalForm);
+            _graphVizFileModel = _graphVizService.ConvertExpressionModelToGraphVizFile(_expressionModelSimplifiedDisjunctiveNormalForm);
+            _fileService.WriteGraphVizFileToDotFile(_graphVizFileModel.Lines);
+            _graphVizService.DisplayGraph();
+
+            //Nand
+            Nand = _fixConversionService.GetNandForm(_expressionModel);
         }
 
     }

@@ -20,9 +20,10 @@ namespace Ale1Project.Model
         public string Infix { get; set; }
         public string DisjunctiveNormalForm { get; set; }
         public string DisjunctiveNormalFormSimplified { get; set; }
+        public string Nand { get; set; }
         public List<char> DistinctVariables { get; set; }
         public List<NodeModel> TreeNodes { get; set; }
         public List<NodeModel> TreeNodesReversed { get; set; }
         public TruthTableModel TruthTable { get; set; }
-        }
+    }
 }
