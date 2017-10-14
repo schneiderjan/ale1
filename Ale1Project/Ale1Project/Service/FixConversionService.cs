@@ -209,43 +209,7 @@ namespace Ale1Project.Service
             }
         }
 
-        private void ConvertNodesToNand(NodeModel currentNode, NodeModel previousNode)
-        {
-            if (currentNode == null) return;
-
-            //normal case
-            if (previousNode != null && currentNode.RightChild != null)
-            {
-                _nand = _nand + "(";
-                ConvertNodesToNand(currentNode.LeftChild, previousNode);
-                if (_operatorService.IsOperator(currentNode.Value) || currentNode.Value.Equals(_operatorService.Not))
-                {
-                }
-                else
-                {
-
-                }
-                ConvertNodesToNand(currentNode.RightChild, previousNode);
-            }
-            //First case
-            else
-            {
-                ConvertNodesToNand(currentNode.LeftChild, currentNode);
-
-                if (_operatorService.IsOperator(currentNode.Value) || currentNode.Value.Equals(_operatorService.Not))
-                {
-
-                }
-                else
-                {
-
-                }
-
-                ConvertNodesToNand(currentNode.RightChild, currentNode);
-            }
-        }
-
-        private void AddValueToNand(NodeModel operatorNode, NodeModel lhsNode, NodeModel rhsNode)
+       private void AddValueToNand(NodeModel operatorNode, NodeModel lhsNode, NodeModel rhsNode)
         {
             //p || q === ~p % ~q
             //p && q === ~(p % q)
@@ -255,7 +219,7 @@ namespace Ale1Project.Service
 
             if (operatorNode.Value.Equals("&"))
             {
-                _nand = string.Format("(%({0},{1}))", lhsNode.Value, rhsNode.Value);
+                _nand = string.Format("~(%({0},{1}))", lhsNode.Value, rhsNode.Value);
             }
             else if (operatorNode.Value.Equals("|"))
             {

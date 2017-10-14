@@ -6,21 +6,7 @@ using GalaSoft.MvvmLight.CommandWpf;
 
 namespace Ale1Project.ViewModel
 {
-    //"&((|(A,~(B)),C)"
-    //&(|(A,B),>(C,~(&(|(D,E),>(&(|(F,G),>(H,~(&(|(I,J),>(K,~(L)))))),~(M))))))
-    //"&(=(A,B),|(C,D))"
-    //"&((|(A,~(B)),C)"
-    //"=( >(A,B), |( ~(A) ,B) ) 
-    //&(A, ~(B))
-    //~(&(~(&(A,C)),~(&(~(B),C))))
-    //|((|(A,(B)),C)
-    //&(&(p,q),~(p))
-
-    //tautology
-    //|(>(p,q),>(q,p)) 
-
-    //use for simplification of truth table
-    //&(=(A,B),|(C,D)) 
+    
 
     /// <summary>
     /// This class contains properties that the main View can data expressionModel.Binaryd to.
@@ -136,6 +122,23 @@ namespace Ale1Project.ViewModel
             set { _hashDisjunctiveNormalForm = value; RaisePropertyChanged(); }
         }
 
+
+        //"&((|(A,~(B)),C)"
+        //&(|(A,B),>(C,~(&(|(D,E),>(&(|(F,G),>(H,~(&(|(I,J),>(K,~(L)))))),~(M))))))
+        //"&(=(A,B),|(C,D))"
+        //"&((|(A,~(B)),C)"
+        //"=( >(A,B), |( ~(A) ,B) ) 
+        //&(A, ~(B))
+        //~(&(>(&(A,C)),~(&(~(B),C))))
+        //|((|(A,(B)),C)
+        //&(&(p,q),~(p))
+        //&(>(|(A,~(B)),C),A)
+
+        //tautology
+        //|(>(p,q),>(q,p)) 
+
+        //use for simplification of truth table
+        //&(=(A,B),|(C,D)) 
         public MainViewModel(IFixConversionService fixConversionService, ITruthTableService truthTableService, IGraphVizService graphVizService, IFileService fileService)
         {
             ParsePrefixCommand = new RelayCommand(ParsePrefix, ParseCanExecute);
@@ -146,12 +149,8 @@ namespace Ale1Project.ViewModel
 
             //FOR DEBUGGING
             _expressionModel = new ExpressionModel();
-            //Prefix = "|((|(A,(B)),C)";
-            Prefix = "&((|(A,~(B)),C)";
-            //Prefix = "&(>(|(A,~(B)),C),A)";
-            //ExpressionModel.Prefix = "|((|(A,(B)),C)";
-            _expressionModel.Prefix = "&((|(A,~(B)),C)";
-            //_expressionModel.Prefix = "&(>(|(A,~(B)),C),A)";
+            Prefix = "~(&(>(&(A,C)),~(&(~(B),C))))";
+            _expressionModel.Prefix = "~(&(>(&(A,C)),~(&(~(B),C))))";
 
             _fixConversionService = fixConversionService;
             _truthTableService = truthTableService;
