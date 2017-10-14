@@ -148,8 +148,10 @@ namespace Ale1Project.ViewModel
             _expressionModel = new ExpressionModel();
             //Prefix = "|((|(A,(B)),C)";
             Prefix = "&((|(A,~(B)),C)";
+            //Prefix = "&(>(|(A,~(B)),C),A)";
             //ExpressionModel.Prefix = "|((|(A,(B)),C)";
             _expressionModel.Prefix = "&((|(A,~(B)),C)";
+            //_expressionModel.Prefix = "&(>(|(A,~(B)),C),A)";
 
             _fixConversionService = fixConversionService;
             _truthTableService = truthTableService;

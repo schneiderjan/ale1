@@ -21,8 +21,7 @@ namespace Ale1Project.Service
 
         public bool IsOperator(string val)
         {
-            if (Operators.Contains(val)) return true;
-            return false;
+            return Operators.Contains(val);
         }
         public string ConvertAsciiReprentation(string rootNodeValue)
         {

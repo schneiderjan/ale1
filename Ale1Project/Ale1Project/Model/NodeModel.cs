@@ -34,5 +34,6 @@ namespace Ale1Project.Model
             Value = val;
             RightChild = rightChild;
         }
+
     }
 }

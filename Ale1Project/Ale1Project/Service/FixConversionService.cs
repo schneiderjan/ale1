@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Ale1Project.Model;
@@ -159,47 +160,116 @@ namespace Ale1Project.Service
 
         public string GetNandForm(ExpressionModel expressionModel)
         {
-            string _nand = string.Empty;
-            //p or q == ~p % ~q
-            //p and q == p % q
-            //p => q == p % ~q
-            //p <=> q == (p % q) % (~p % ~q)
-            //~p == p % p
+            _nand = string.Empty;
 
+            //ConvertNodesToNand(expressionModel.TreeNodes[0], null);
+            ConvertNodesToNand(expressionModel);
 
-            ConvertNodesToNand(expressionModel.TreeNodes[0], null);
 
             expressionModel.Nand = _nand;
             return _nand;
+        }
+
+        private void ConvertNodesToNand(ExpressionModel expressionModel)
+        {
+            //lhs: lefthandside; rhs: righthandside
+            var stack = new Stack<NodeModel>();
+            int id = 0;
+
+            foreach (var treeNode in expressionModel.TreeNodesReversed)
+            {
+                if (_operatorService.IsOperator(treeNode.Value))
+                {
+                    var lhsNode = stack.Pop();
+                    var rhsNode = stack.Pop();
+
+                    AddValueToNand(treeNode, lhsNode, rhsNode);
+
+                    //Nand is gradually building up, therefore, need to add intermediate nand
+                    stack.Push(new NodeModel(id++, _nand));
+                }
+                else if (_operatorService.Not.Equals(treeNode.Value))
+                {
+                    var valueOfNotNode = stack.Pop();
+                    var expression = $"%({valueOfNotNode.Value},{valueOfNotNode.Value})";
+
+                    stack.Push(new NodeModel(id++, expression));
+                }
+                else
+                {
+                    stack.Push(treeNode);
+                }
+            }
+
+            //e.g. a proposition such as ~P
+            if (stack.Count > 0 && _nand.Equals(string.Empty))
+            {
+                var node = stack.Pop();
+                _nand = node.Value;
+            }
         }
 
         private void ConvertNodesToNand(NodeModel currentNode, NodeModel previousNode)
         {
             if (currentNode == null) return;
 
+            //normal case
             if (previousNode != null && currentNode.RightChild != null)
             {
-
-
+                _nand = _nand + "(";
+                ConvertNodesToNand(currentNode.LeftChild, previousNode);
                 if (_operatorService.IsOperator(currentNode.Value) || currentNode.Value.Equals(_operatorService.Not))
                 {
                 }
                 else
                 {
+
                 }
-
-
+                ConvertNodesToNand(currentNode.RightChild, previousNode);
             }
+            //First case
             else
             {
+                ConvertNodesToNand(currentNode.LeftChild, currentNode);
 
                 if (_operatorService.IsOperator(currentNode.Value) || currentNode.Value.Equals(_operatorService.Not))
                 {
+
                 }
                 else
                 {
+
                 }
+
+                ConvertNodesToNand(currentNode.RightChild, currentNode);
             }
+        }
+
+        private void AddValueToNand(NodeModel operatorNode, NodeModel lhsNode, NodeModel rhsNode)
+        {
+            //p || q === ~p % ~q
+            //p && q === ~(p % q)
+            //p => q === p % ~q
+            //p <=> q === (p % q) % (~p % ~q)
+            //~p    === p % p
+
+            if (operatorNode.Value.Equals("&"))
+            {
+                _nand = string.Format("(%({0},{1}))", lhsNode.Value, rhsNode.Value);
+            }
+            else if (operatorNode.Value.Equals("|"))
+            {
+                _nand = string.Format("%(~({0}),~({1}))", lhsNode.Value, rhsNode.Value);
+            }
+            else if (operatorNode.Value.Equals(">"))
+            {
+                _nand = string.Format("%({0},~({1}))", lhsNode.Value, rhsNode.Value);
+            }
+            else if (operatorNode.Value.Equals("="))
+            {
+                _nand = string.Format("%(%({0},{1}),%(~({0}),~({1})))", lhsNode.Value, rhsNode.Value);
+            }
+
         }
 
         private string Alphabetize(string s)
