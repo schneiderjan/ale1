@@ -231,7 +231,8 @@ namespace Ale1Project.Service
                 //add counter and row to implicants
                 string implicant = truthRow.Remove(truthRow.Length - 1);
                 implicants.Add(counter, implicant);
-                //replace by key value pair
+                //replace by key value pair /./ the dict i mean
+
             }
 
             if (implicants.Count > 1)
