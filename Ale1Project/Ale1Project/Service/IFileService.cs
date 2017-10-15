@@ -6,6 +6,6 @@ namespace Ale1Project.Service
 {
     public interface IFileService
     {
-        void WriteGraphVizFileToDotFile(List<string> lines);
+        void WriteGraphVizFileToDotFile(List<string> lines,string name);
     }
 }

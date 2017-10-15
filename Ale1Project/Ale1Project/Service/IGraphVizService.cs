@@ -9,7 +9,7 @@ namespace Ale1Project.Service
 {
    public interface IGraphVizService
    {
-       void DisplayGraph();
+       void DisplayGraph(string name);
        GraphVizFileModel ConvertExpressionModelToGraphVizFile(ExpressionModel expressionModel);
    }
 }

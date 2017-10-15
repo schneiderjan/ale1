@@ -25,30 +25,30 @@ namespace Ale1Project.Service
         }
         public string ConvertAsciiReprentation(string rootNodeValue)
         {
-            var op = string.Empty;
+            var output = string.Empty;
 
             switch (rootNodeValue)
             {
                 case "~":
-                    op = "¬";
+                    output = "¬";
                     break;
                 case "&":
-                    op = "⋀";
+                    output = "⋀";
                     break;
                 case "|":
-                    op = "⋁";
+                    output = "⋁";
                     break;
                 case ">":
-                    op = "⇒";
+                    output = "⇒";
                     break;
                 case "=":
-                    op = "⇔";
+                    output = "⇔";
                     break;
                 case "%":
-                    op = "%";
+                    output = "⊼";
                     break;
             }
-            return op;
+            return output;
         }
     }
 }

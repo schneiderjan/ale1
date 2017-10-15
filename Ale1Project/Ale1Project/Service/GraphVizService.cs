@@ -12,14 +12,14 @@ namespace Ale1Project.Service
 {
     public class GraphVizService : IGraphVizService
     {
-        public void DisplayGraph()
+        public void DisplayGraph(string name)
         {
             //Path to GrahpViz depends on Installation path!!!
             ProcessStartInfo processStartInfo = new ProcessStartInfo
             {
                 WorkingDirectory = @"C:\Program Files (x86)\Graphviz2.38\bin",
                 FileName = @"C:\Program Files (x86)\Graphviz2.38\bin\dot.exe",
-                Arguments = $"-Tpng -o{System.IO.Directory.GetCurrentDirectory()}\\dot.png {System.IO.Directory.GetCurrentDirectory()}\\dot.dot",
+                Arguments = $"-Tpng -o{System.IO.Directory.GetCurrentDirectory()}\\dot{name}.png {System.IO.Directory.GetCurrentDirectory()}\\dot{name}.dot",
                 ErrorDialog = true,
                 UseShellExecute = false,
                 RedirectStandardError = true,
@@ -29,11 +29,11 @@ namespace Ale1Project.Service
             Debug.WriteLine(processStartInfo.Arguments);
             Process p = Process.Start(processStartInfo);
 
-            Thread.Sleep(100);
+            Thread.Sleep(200);
             try
             {
                 ProcessStartInfo pictureProcessStartInfo = new ProcessStartInfo();
-                pictureProcessStartInfo.FileName = System.IO.Directory.GetCurrentDirectory() + "\\dot.png";
+                pictureProcessStartInfo.FileName = System.IO.Directory.GetCurrentDirectory() + $"\\dot{name}.png";
                 Process.Start(pictureProcessStartInfo);
             }
             catch (Win32Exception exception)

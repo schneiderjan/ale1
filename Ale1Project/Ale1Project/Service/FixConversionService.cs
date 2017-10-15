@@ -219,19 +219,19 @@ namespace Ale1Project.Service
 
             if (operatorNode.Value.Equals("&"))
             {
-                _nand = string.Format("~(%({0},{1}))", lhsNode.Value, rhsNode.Value);
+                _nand = string.Format("%(%({0},{1}),%({0},{1}))", lhsNode.Value, rhsNode.Value);
             }
             else if (operatorNode.Value.Equals("|"))
             {
-                _nand = string.Format("%(~({0}),~({1}))", lhsNode.Value, rhsNode.Value);
+                _nand = string.Format("%(%({0},{0}),%({1},{1}))", lhsNode.Value, rhsNode.Value);
             }
             else if (operatorNode.Value.Equals(">"))
             {
-                _nand = string.Format("%({0},~({1}))", lhsNode.Value, rhsNode.Value);
+                _nand = string.Format("%({0},%({1},{1}))", lhsNode.Value, rhsNode.Value);
             }
             else if (operatorNode.Value.Equals("="))
             {
-                _nand = string.Format("%(%({0},{1}),%(~({0}),~({1})))", lhsNode.Value, rhsNode.Value);
+                _nand = string.Format("%(%({0},{1}),%(%({0},{0}),%({1},{1})))", lhsNode.Value, rhsNode.Value);
             }
 
         }

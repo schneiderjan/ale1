@@ -193,14 +193,17 @@ namespace Ale1Project.Service
 
             foreach (var str in expressionModel.TruthTable.Rows)
             {
-                var x = Regex.Replace(str.ToString(), @"\s+", "");
+                var x = Regex.Replace(str, @"\s+", "");
                 rows.Add(x);
             }
             //truthTable = rows;
 
             for (int i = 1; i < rows.Count; i++)
             {
-                if (rows[i][expressionModel.DistinctVariables.Count] == '1') truthRows.Add(rows[i]);
+                if (rows[i][expressionModel.DistinctVariables.Count] == '1')
+                {
+                    truthRows.Add(rows[i]);
+                }
             }
 
             if (truthRows.Count >= 2)
@@ -223,7 +226,7 @@ namespace Ale1Project.Service
 
                         if (simplifiable > 1)
                         {
-                            string leftside = "", rightside = "";
+                            string leftside = String.Empty, rightside = string.Empty;
 
                             for (int t = 0; t < i; t++)
                             {
@@ -234,11 +237,14 @@ namespace Ale1Project.Service
                                 rightside += "*\t";
                             }
 
-                            string tautology = "";
+                            string tautology = String.Empty;
                             if (rows[j][i] == '1')
                             {
                                 tautology = leftside + "0\t" + rightside + "1";
-                                if (result.Contains(tautology)) result.Remove(tautology);
+                                if (result.Contains(tautology))
+                                {
+                                    result.Remove(tautology);
+                                }
                             }
                             else
                             {

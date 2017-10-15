@@ -9,10 +9,9 @@ namespace Ale1Project.Service
 {
     public class FileService : IFileService
     {
-
-        public void WriteGraphVizFileToDotFile(List<string> lines)
+        public void WriteGraphVizFileToDotFile(List<string> lines, string name)
         {
-            using (StreamWriter sw = new StreamWriter(Directory.GetCurrentDirectory() + "\\dot.dot", false))
+            using (StreamWriter sw = new StreamWriter(Directory.GetCurrentDirectory() + "\\dot"+ name +".dot", false))
             {
                 foreach (var line in lines)
                 {
