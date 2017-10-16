@@ -14,6 +14,7 @@ namespace Ale1Project.Service
     public class TruthTableService : ITruthTableService
     {
         private readonly IOperatorService _operatorService;
+        private List<string> _simplifiedTruthTable = new List<string>();
 
         public TruthTableService(IOperatorService operatorService)
         {
@@ -249,8 +250,7 @@ namespace Ale1Project.Service
         private List<string> MinimizeImplicants(List<ImplicantModel> implicants, int nrOfGroups, ExpressionModel expressionModel)
         {
             List<ImplicantModel> nextOrderImplicants = new List<ImplicantModel>();
-
-
+            
             for (int i = 0; i < nrOfGroups; i++)
             {
                 //check if not last group
@@ -310,16 +310,22 @@ namespace Ale1Project.Service
 
                                 //TODO Before adding to list make sure they dont exist to avoid duplicates
                                 //currentgroup
-                                StringBuilder sb1 = new StringBuilder(newImplicantCurrentGroup) { [k] = '*' };
+                                StringBuilder sb1 = new StringBuilder(newImplicantCurrentGroup) {[k] = '*'};
                                 newImplicantCurrentGroup = sb1.ToString();
                                 var newGroupNumber1 = newImplicantCurrentGroup.Count(x => x.Equals('1'));
-                                nextOrderImplicants.Add(new ImplicantModel(newGroupNumber1, newImplicantCurrentGroup));
-
+                                if (nextOrderImplicants.All(x => x.Implicant != newImplicantCurrentGroup))
+                                {
+                                    nextOrderImplicants.Add(new ImplicantModel(newGroupNumber1,
+                                        newImplicantCurrentGroup));
+                                }
                                 //nextgroup
-                                StringBuilder sb2 = new StringBuilder(newImplicantNextGroup) { [k] = '*' };
+                                StringBuilder sb2 = new StringBuilder(newImplicantNextGroup) {[k] = '*'};
                                 newImplicantNextGroup = sb2.ToString();
                                 var newGroupNumber2 = newImplicantNextGroup.Count(x => x.Equals('1'));
-                                nextOrderImplicants.Add(new ImplicantModel(newGroupNumber2, newImplicantNextGroup));
+                                if (nextOrderImplicants.All(x => x.Implicant != newImplicantNextGroup))
+                                {
+                                    nextOrderImplicants.Add(new ImplicantModel(newGroupNumber2, newImplicantNextGroup));
+                                }
                             }
                         }
                     }
@@ -375,16 +381,16 @@ namespace Ale1Project.Service
 
                 if (continuationFlag)
                 {
-                    var newNrOfGroups = nextOrderImplicants.Max(x => x.Group);
+                    var newNrOfGroups = nextOrderImplicants.Max(x => x.Group)+ 1; //see n+1 groups
                     MinimizeImplicants(nextOrderImplicants, newNrOfGroups, expressionModel);
                 }
                 else
                 {
-                    return CreateSimplifiedTruthTable(expressionModel, nextOrderImplicants);
+                    _simplifiedTruthTable = CreateSimplifiedTruthTable(expressionModel, nextOrderImplicants);
                 }
             }
 
-            return expressionModel.TruthTable.Rows;
+            return _simplifiedTruthTable;
         }
 
         private List<string> CreateSimplifiedTruthTable(ExpressionModel expressionModel, List<ImplicantModel> nextOrderImplicants)
