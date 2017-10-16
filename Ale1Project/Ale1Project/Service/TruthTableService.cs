@@ -247,38 +247,35 @@ namespace Ale1Project.Service
 
         private List<string> MinimizeImplicants(List<ImplicantModel> implicants, int nrOfGroups, ExpressionModel expressionModel)
         {
-            int counter = 0;
             List<ImplicantModel> nextOrderImplicants = new List<ImplicantModel>();
+
 
             for (int i = 0; i < nrOfGroups; i++)
             {
                 //check if not last group
                 if (i < nrOfGroups - 1)
                 {
-
                     var currentGroupsImplicants = implicants.Where(x => x.Group == i).ToList();
                     if (!currentGroupsImplicants.Any())
                     {
                         continue;
                     }
-                    List<ImplicantModel> nextGroupsImplicants;
+
 
                     //find the next greater key in implicants. 
-                    //binary search returns next key if found. if not it finds next greatest as negative complement.
-                    int index = 50000;
+                    //binary search returns index (i+1) if found. if not it finds next greatest as negative complement.
+                    //if nothing is found count is returned
                     List<int> possibleNextGroups = (from implicant in implicants select implicant.Group).Distinct().ToList();
                     possibleNextGroups.Sort();
-                    index = possibleNextGroups.BinarySearch(i + 1);
+                    var index = possibleNextGroups.BinarySearch(i + 1);
                     index = Math.Abs(index);
-                    var groupNumber = possibleNextGroups[index];
-                    if (groupNumber < 0 || groupNumber == i + 1)
-                    {
-                        nextGroupsImplicants = implicants.Where(x => x.Group == groupNumber).ToList();
-                    }
-                    else
+                    if (index == possibleNextGroups.Count) //see binarySearch docu
                     {
                         continue;
                     }
+                    var groupNumber = possibleNextGroups[index];
+                    var nextGroupsImplicants = implicants.Where(x => x.Group == groupNumber).ToList();
+
 
                     foreach (var currentGroupImplicant in currentGroupsImplicants)
                     {
@@ -312,24 +309,64 @@ namespace Ale1Project.Service
 
                             nextOrderImplicants.Add(new ImplicantModel(i, newImplicant));
                         }
-
-
-
                     }
                 }
             }
 
-            //if for all nextOrderImplicants row length - 1 = number of *
-            //then simplification is complete maybe
+            //if for one nextOrderImplicants row length - 1 = number of *
+            //then simplification is complete
 
+            //if nextorderimplicants == 0 then check if there are stars in old order implicants
+            //if they contain stars return them in combination with old truth table
+            //if (nextOrderImplicants.Count == 0)
+            //{
+
+            //when continuationFlag is true then the table can be simplified further
+            //if for one nextOrderImplicants row length - 1 = number of *
+            //then simplification is complete
+            bool continuationFlag = false;
             if (nextOrderImplicants.Count > 0)
             {
-                MinimizeImplicants(nextOrderImplicants, nrOfGroups, expressionModel);
+                foreach (var nextOrderImplicant in nextOrderImplicants)
+                {
+                    if (continuationFlag)
+                    {
+                        break;
+                    }
+
+                    int dontCareCounter = 0;
+                    foreach (var c in nextOrderImplicant.Implicant)
+                    {
+                        if (c.Equals('*'))
+                        {
+                            dontCareCounter++;
+                        }
+                    }
+
+                    if (nextOrderImplicant.Implicant.Length - 1 != dontCareCounter)
+                    {
+                        continuationFlag = true;
+                    }
+                }
+
+                if (continuationFlag)
+                {
+                    MinimizeImplicants(nextOrderImplicants, nrOfGroups, expressionModel);
+                }
+                else
+                {
+                    CreateSimplifiedTruthTable(expressionModel, nextOrderImplicants);
+                }
             }
 
             //build simplified truth table
 
-            return new List<string>();
+            return expressionModel.TruthTable.Rows;
+        }
+
+        private List<string> CreateSimplifiedTruthTable(ExpressionModel expressionModel, List<ImplicantModel> nextOrderImplicants)
+        {
+            
         }
 
         //public List<string> SimplifyTruthTable(ExpressionModel expressionModel)
