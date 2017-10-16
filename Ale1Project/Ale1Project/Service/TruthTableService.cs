@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -197,8 +198,7 @@ namespace Ale1Project.Service
             int nrOfGroups = expressionModel.DistinctVariables.Count + 1; //nr of vars. + 1
             var rows = new List<string>();
             var truthRows = new List<string>(); //aka Epsilon m
-            var implicants = new Dictionary<int, string>();
-
+            List<ImplicantModel> implicants = new List<ImplicantModel>();
             foreach (var str in expressionModel.TruthTable.Rows)
             {
                 var x = Regex.Replace(str, @"\s+", "");
@@ -230,7 +230,7 @@ namespace Ale1Project.Service
 
                 //add counter and row to implicants
                 string implicant = truthRow.Remove(truthRow.Length - 1);
-                implicants.Add(counter, implicant);
+                implicants.Add(new ImplicantModel(counter, implicant));
                 //replace by key value pair /./ the dict i mean
 
             }
@@ -245,45 +245,46 @@ namespace Ale1Project.Service
             return new List<string>();
         }
 
-        private List<string> MinimizeImplicants(Dictionary<int, string> implicants, int nrOfGroups, ExpressionModel expressionModel)
+        private List<string> MinimizeImplicants(List<ImplicantModel> implicants, int nrOfGroups, ExpressionModel expressionModel)
         {
             int counter = 0;
-            Dictionary<int, string> nextOrderImplicants = new Dictionary<int, string>();
+            List<ImplicantModel> nextOrderImplicants = new List<ImplicantModel>();
 
             for (int i = 0; i < nrOfGroups; i++)
             {
                 //check if not last group
                 if (i < nrOfGroups - 1)
                 {
-                    var currentGroups = implicants.Where(x => x.Key == i);
-                    if (currentGroups.Count()==0)
+
+                    var currentGroupsImplicants = implicants.Where(x => x.Group == i).ToList();
+                    if (!currentGroupsImplicants.Any())
                     {
                         continue;
                     }
-                    IEnumerable<KeyValuePair<int, string>> nextGroups;
+                    List<ImplicantModel> nextGroupsImplicants;
 
                     //find the next greater key in implicants. 
                     //binary search returns next key if found. if not it finds next greatest as negative complement.
                     int index = 50000;
-                    List<int> keysList = new List<int>(implicants.Keys);
-                    index = keysList.BinarySearch(i + 1);
-                    if (index < 0)
+                    List<int> possibleNextGroups = (from implicant in implicants select implicant.Group).Distinct().ToList();
+                    possibleNextGroups.Sort();
+                    index = possibleNextGroups.BinarySearch(i + 1);
+                    index = Math.Abs(index);
+                    var groupNumber = possibleNextGroups[index];
+                    if (groupNumber < 0 || groupNumber == i + 1)
                     {
-                        index = index * -1;
-                        nextGroups = implicants.Where(x => x.Key == index);
+                        nextGroupsImplicants = implicants.Where(x => x.Group == groupNumber).ToList();
                     }
                     else
                     {
                         continue;
                     }
 
-
-
-                    foreach (var currentGroup in currentGroups)
+                    foreach (var currentGroupImplicant in currentGroupsImplicants)
                     {
                         List<int> indicesToBeReplacedByAsterix = new List<int>();
 
-                        foreach (var nextGroup in nextGroups)
+                        foreach (var nextGroupImplicant in nextGroupsImplicants)
                         {
                             //for every in the current group need to check every item in next group
                             //it needs to be check whether exactly one difference exists in row,
@@ -291,34 +292,35 @@ namespace Ale1Project.Service
                             //however only index can be change at a given time
                             for (int j = 0; j < expressionModel.DistinctVariables.Count; j++)
                             {
-                                if (currentGroup.Value[j] == '1' && nextGroup.Value[j] == '0'
-                                    || currentGroup.Value[j] == '0' && nextGroup.Value[j] == '1')
+                                if (currentGroupImplicant.Implicant[j] == '1' && nextGroupImplicant.Implicant[j] == '0'
+                                    || currentGroupImplicant.Implicant[j] == '0' && nextGroupImplicant.Implicant[j] == '1')
                                 {
                                     indicesToBeReplacedByAsterix.Add(j);
                                 }
                             }
                         }
 
-                        string newImplicant = currentGroup.Value;
+
+                        string newImplicant = currentGroupImplicant.Implicant;
                         if (indicesToBeReplacedByAsterix.Count == 1)
                         {
-
                             //replace values with * and add to new implicants
-                            for (int k = 0; k < newImplicant.Length; k++)
-                            {
-                                if (indicesToBeReplacedByAsterix.Contains(k))
-                                {
-                                    StringBuilder sb = new StringBuilder(newImplicant) {[k] = '*'};
-                                    newImplicant = sb.ToString();
-                                }
-                            }
-                        }
-                     
+                            //can remove loop since its only one element in list
+                            var k = indicesToBeReplacedByAsterix.FirstOrDefault();
+                            StringBuilder sb = new StringBuilder(newImplicant) { [k] = '*' };
+                            newImplicant = sb.ToString();
 
-                    nextOrderImplicants.Add(i, newImplicant);
+                            nextOrderImplicants.Add(new ImplicantModel(i, newImplicant));
+                        }
+
+
+
                     }
                 }
             }
+
+            //if for all nextOrderImplicants row length - 1 = number of *
+            //then simplification is complete maybe
 
             if (nextOrderImplicants.Count > 0)
             {
