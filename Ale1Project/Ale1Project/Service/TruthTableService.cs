@@ -199,6 +199,8 @@ namespace Ale1Project.Service
             var rows = new List<string>();
             var truthRows = new List<string>(); //aka Epsilon m
             List<ImplicantModel> implicants = new List<ImplicantModel>();
+
+
             foreach (var str in expressionModel.TruthTable.Rows)
             {
                 var x = Regex.Replace(str, @"\s+", "");
@@ -214,7 +216,6 @@ namespace Ale1Project.Service
             }
 
             //search for columns that have 0, 1, ..., n number of 1's in the row
-            //maybe a dictionary? row | group
             //assign group numbers to truth rows
             for (var index = 0; index < truthRows.Count; index++)
             {
@@ -238,11 +239,11 @@ namespace Ale1Project.Service
             if (implicants.Count > 1)
             {
                 //recursive stuff
-                MinimizeImplicants(implicants, nrOfGroups, expressionModel);
+                return MinimizeImplicants(implicants, nrOfGroups, expressionModel);
             }
             //some un-simplifiable stuff. probs a tautology then jan must think of something here
 
-            return new List<string>();
+            return expressionModel.TruthTable.Rows;
         }
 
         private List<string> MinimizeImplicants(List<ImplicantModel> implicants, int nrOfGroups, ExpressionModel expressionModel)
@@ -261,11 +262,11 @@ namespace Ale1Project.Service
                         continue;
                     }
 
-
                     //find the next greater key in implicants. 
                     //binary search returns index (i+1) if found. if not it finds next greatest as negative complement.
                     //if nothing is found count is returned
-                    List<int> possibleNextGroups = (from implicant in implicants select implicant.Group).Distinct().ToList();
+                    List<int> possibleNextGroups =
+                        (from implicant in implicants select implicant.Group).Distinct().ToList();
                     possibleNextGroups.Sort();
                     var index = possibleNextGroups.BinarySearch(i + 1);
                     index = Math.Abs(index);
@@ -273,6 +274,7 @@ namespace Ale1Project.Service
                     {
                         continue;
                     }
+                    //if i get the error here then i somehow need to keep the old group
                     var groupNumber = possibleNextGroups[index];
                     var nextGroupsImplicants = implicants.Where(x => x.Group == groupNumber).ToList();
 
@@ -290,27 +292,49 @@ namespace Ale1Project.Service
                             for (int j = 0; j < expressionModel.DistinctVariables.Count; j++)
                             {
                                 if (currentGroupImplicant.Implicant[j] == '1' && nextGroupImplicant.Implicant[j] == '0'
-                                    || currentGroupImplicant.Implicant[j] == '0' && nextGroupImplicant.Implicant[j] == '1')
+                                    || currentGroupImplicant.Implicant[j] == '0' &&
+                                    nextGroupImplicant.Implicant[j] == '1')
                                 {
                                     indicesToBeReplacedByAsterix.Add(j);
                                 }
                             }
-                        }
 
+                            string newImplicantCurrentGroup = currentGroupImplicant.Implicant;
+                            string newImplicantNextGroup = nextGroupImplicant.Implicant;
+                            //add also from next group
+                            if (indicesToBeReplacedByAsterix.Count == 1)
+                            {
+                                //replace values with * and add to new implicants
+                                //for current and next group implicant
+                                var k = indicesToBeReplacedByAsterix.FirstOrDefault();
 
-                        string newImplicant = currentGroupImplicant.Implicant;
-                        if (indicesToBeReplacedByAsterix.Count == 1)
-                        {
-                            //replace values with * and add to new implicants
-                            //can remove loop since its only one element in list
-                            var k = indicesToBeReplacedByAsterix.FirstOrDefault();
-                            StringBuilder sb = new StringBuilder(newImplicant) { [k] = '*' };
-                            newImplicant = sb.ToString();
+                                //TODO Before adding to list make sure they dont exist to avoid duplicates
+                                //currentgroup
+                                StringBuilder sb1 = new StringBuilder(newImplicantCurrentGroup) { [k] = '*' };
+                                newImplicantCurrentGroup = sb1.ToString();
+                                var newGroupNumber1 = newImplicantCurrentGroup.Count(x => x.Equals('1'));
+                                nextOrderImplicants.Add(new ImplicantModel(newGroupNumber1, newImplicantCurrentGroup));
 
-                            nextOrderImplicants.Add(new ImplicantModel(i, newImplicant));
+                                //nextgroup
+                                StringBuilder sb2 = new StringBuilder(newImplicantNextGroup) { [k] = '*' };
+                                newImplicantNextGroup = sb2.ToString();
+                                var newGroupNumber2 = newImplicantNextGroup.Count(x => x.Equals('1'));
+                                nextOrderImplicants.Add(new ImplicantModel(newGroupNumber2, newImplicantNextGroup));
+                            }
                         }
                     }
+
                 }
+                //we compare to the last group but we also need to keep them for next order
+                //else
+                //{
+                //    var lastGroupsImplicants = implicants.Where(x => x.Group == i).ToList();
+                //    if (!lastGroupsImplicants.Any())
+                //    {
+                //        continue;
+                //    }
+                //    nextOrderImplicants.AddRange(lastGroupsImplicants);
+                //}
             }
 
             //if for one nextOrderImplicants row length - 1 = number of *
@@ -351,22 +375,50 @@ namespace Ale1Project.Service
 
                 if (continuationFlag)
                 {
-                    MinimizeImplicants(nextOrderImplicants, nrOfGroups, expressionModel);
+                    var newNrOfGroups = nextOrderImplicants.Max(x => x.Group);
+                    MinimizeImplicants(nextOrderImplicants, newNrOfGroups, expressionModel);
                 }
                 else
                 {
-                    CreateSimplifiedTruthTable(expressionModel, nextOrderImplicants);
+                    return CreateSimplifiedTruthTable(expressionModel, nextOrderImplicants);
                 }
             }
-
-            //build simplified truth table
 
             return expressionModel.TruthTable.Rows;
         }
 
         private List<string> CreateSimplifiedTruthTable(ExpressionModel expressionModel, List<ImplicantModel> nextOrderImplicants)
         {
-            
+            List<string> simplifiedTruthTable = new List<string>();
+
+            //add header
+            simplifiedTruthTable.Add(expressionModel.TruthTable.Rows[0]);
+
+            //add rows with 0 as result
+            List<string> zeroRows = new List<string>();
+            foreach (var str in expressionModel.TruthTable.Rows)
+            {
+                var x = Regex.Replace(str, @"\s+", "");
+                zeroRows.Add(x);
+            }
+            for (int i = 1; i < zeroRows.Count; i++)
+            {
+                if (zeroRows[i][expressionModel.DistinctVariables.Count] == '0')
+                {
+                    var row = Regex.Replace(zeroRows[i], ".{1}", "$0\t");
+                    simplifiedTruthTable.Add(row);
+                }
+            }
+
+            //add simplified rows
+            foreach (var nextOrderImplicant in nextOrderImplicants)
+            {
+                var row = Regex.Replace(nextOrderImplicant.Implicant, ".{1}", "$0\t");
+                row += "1";
+                simplifiedTruthTable.Add(row);
+            }
+
+            return simplifiedTruthTable;
         }
 
         //public List<string> SimplifyTruthTable(ExpressionModel expressionModel)

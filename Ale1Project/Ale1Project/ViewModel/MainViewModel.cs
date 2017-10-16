@@ -183,6 +183,7 @@ namespace Ale1Project.ViewModel
         //~a
         //|(a,b)
         //&(a,b)
+        //|(|(a,b),c)
 
         //tautology
         //|(>(p,q),>(q,p)) 
@@ -200,8 +201,8 @@ namespace Ale1Project.ViewModel
 
             //FOR DEBUGGING
             _expressionModel = new ExpressionModel();
-            Prefix = ">(a,b)";
-            _expressionModel.Prefix = ">(a,b)";
+            Prefix = "|(|(a,b),c)";
+            _expressionModel.Prefix = "|(|(a,b),c)";
 
             _fixConversionService = fixConversionService;
             _truthTableService = truthTableService;
