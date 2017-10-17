@@ -190,6 +190,8 @@ namespace Ale1Project.ViewModel
 
         //use for simplification of truth table
         //&(=(A,B),|(C,D)) 
+        //&(|(a, b),c)
+        //|(|(a,b),c)
         public MainViewModel(IFixConversionService fixConversionService, ITruthTableService truthTableService,
             IGraphVizService graphVizService, IFileService fileService)
         {

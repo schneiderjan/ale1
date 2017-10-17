@@ -233,7 +233,6 @@ namespace Ale1Project.Service
                 //add counter and row to implicants
                 string implicant = truthRow.Remove(truthRow.Length - 1);
                 implicants.Add(new ImplicantModel(counter, implicant));
-                //replace by key value pair /./ the dict i mean
 
             }
 
@@ -250,12 +249,13 @@ namespace Ale1Project.Service
         private List<string> MinimizeImplicants(List<ImplicantModel> implicants, int nrOfGroups, ExpressionModel expressionModel)
         {
             List<ImplicantModel> nextOrderImplicants = new List<ImplicantModel>();
-            
+
             for (int i = 0; i < nrOfGroups; i++)
             {
                 //check if not last group
                 if (i < nrOfGroups - 1)
                 {
+
                     var currentGroupsImplicants = implicants.Where(x => x.Group == i).ToList();
                     if (!currentGroupsImplicants.Any())
                     {
@@ -278,7 +278,6 @@ namespace Ale1Project.Service
                     var groupNumber = possibleNextGroups[index];
                     var nextGroupsImplicants = implicants.Where(x => x.Group == groupNumber).ToList();
 
-
                     foreach (var currentGroupImplicant in currentGroupsImplicants)
                     {
                         List<int> indicesToBeReplacedByAsterix = new List<int>();
@@ -291,7 +290,8 @@ namespace Ale1Project.Service
                             //however only index can be change at a given time
                             for (int j = 0; j < expressionModel.DistinctVariables.Count; j++)
                             {
-                                if (currentGroupImplicant.Implicant[j] == '1' && nextGroupImplicant.Implicant[j] == '0'
+                                if (currentGroupImplicant.Implicant[j] == '1' &&
+                                    nextGroupImplicant.Implicant[j] == '0'
                                     || currentGroupImplicant.Implicant[j] == '0' &&
                                     nextGroupImplicant.Implicant[j] == '1')
                                 {
@@ -310,7 +310,7 @@ namespace Ale1Project.Service
 
                                 //TODO Before adding to list make sure they dont exist to avoid duplicates
                                 //currentgroup
-                                StringBuilder sb1 = new StringBuilder(newImplicantCurrentGroup) {[k] = '*'};
+                                StringBuilder sb1 = new StringBuilder(newImplicantCurrentGroup) { [k] = '*' };
                                 newImplicantCurrentGroup = sb1.ToString();
                                 var newGroupNumber1 = newImplicantCurrentGroup.Count(x => x.Equals('1'));
                                 if (nextOrderImplicants.All(x => x.Implicant != newImplicantCurrentGroup))
@@ -319,17 +319,20 @@ namespace Ale1Project.Service
                                         newImplicantCurrentGroup));
                                 }
                                 //nextgroup
-                                StringBuilder sb2 = new StringBuilder(newImplicantNextGroup) {[k] = '*'};
+                                StringBuilder sb2 = new StringBuilder(newImplicantNextGroup) { [k] = '*' };
                                 newImplicantNextGroup = sb2.ToString();
                                 var newGroupNumber2 = newImplicantNextGroup.Count(x => x.Equals('1'));
                                 if (nextOrderImplicants.All(x => x.Implicant != newImplicantNextGroup))
                                 {
-                                    nextOrderImplicants.Add(new ImplicantModel(newGroupNumber2, newImplicantNextGroup));
+                                    nextOrderImplicants.Add(new ImplicantModel(newGroupNumber2,
+                                        newImplicantNextGroup));
                                 }
+
                             }
                         }
-                    }
 
+
+                    }
                 }
                 //we compare to the last group but we also need to keep them for next order
                 //else
@@ -381,7 +384,7 @@ namespace Ale1Project.Service
 
                 if (continuationFlag)
                 {
-                    var newNrOfGroups = nextOrderImplicants.Max(x => x.Group)+ 1; //see n+1 groups
+                    var newNrOfGroups = nextOrderImplicants.Max(x => x.Group) + 1; //see n+1 groups
                     MinimizeImplicants(nextOrderImplicants, newNrOfGroups, expressionModel);
                 }
                 else

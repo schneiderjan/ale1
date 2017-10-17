@@ -14,7 +14,15 @@ namespace Ale1Project.Model
             Group = group;
         }
 
-        public string Implicant { get; set; }
-        public int Group { get; set; }
+        public ImplicantModel(int group, string implicant, int originalNrOfOnes)
+        {
+            Implicant = implicant;
+            OriginalNrOfOnes = originalNrOfOnes;
+            Group = group;
+        }
+
+        public string Implicant { get; private set; }
+        public int OriginalNrOfOnes { get; private set; }
+        public int Group { get; private set; }
     }
 }
