@@ -15,6 +15,10 @@ namespace Ale1Project.Service
     {
         private readonly IOperatorService _operatorService;
         private List<string> _simplifiedTruthTable = new List<string>();
+        //think you dont need to know the table values 
+        //just important what the end value in the row was
+        private List<string> _reversedTruthTable = new List<string>();
+
 
         public TruthTableService(IOperatorService operatorService)
         {
