@@ -18,6 +18,8 @@ namespace Ale1Project.Service
         //think you dont need to know the table values 
         //just important what the end value in the row was
         private List<string> _reversedTruthTable = new List<string>();
+        //for debugging
+        int nrOfRecursions = 0;
 
 
         public TruthTableService(IOperatorService operatorService)
@@ -236,7 +238,7 @@ namespace Ale1Project.Service
 
                 //add counter and row to implicants
                 string implicant = truthRow.Remove(truthRow.Length - 1);
-                implicants.Add(new ImplicantModel(counter, implicant));
+                implicants.Add(new ImplicantModel(counter, implicant, counter));
 
             }
 
@@ -252,6 +254,9 @@ namespace Ale1Project.Service
 
         private List<string> MinimizeImplicants(List<ImplicantModel> implicants, int nrOfGroups, ExpressionModel expressionModel)
         {
+
+            Debug.WriteLine($"iteration: {nrOfRecursions++}");
+
             List<ImplicantModel> nextOrderImplicants = new List<ImplicantModel>();
 
             for (int i = 0; i < nrOfGroups; i++)
@@ -288,6 +293,7 @@ namespace Ale1Project.Service
 
                         foreach (var nextGroupImplicant in nextGroupsImplicants)
                         {
+                            indicesToBeReplacedByAsterix.Clear();
                             //for every in the current group need to check every item in next group
                             //it needs to be check whether exactly one difference exists in row,
                             //e.g. current: 00; next 01. then new implicant 0*
@@ -316,20 +322,20 @@ namespace Ale1Project.Service
                                 //currentgroup
                                 StringBuilder sb1 = new StringBuilder(newImplicantCurrentGroup) { [k] = '*' };
                                 newImplicantCurrentGroup = sb1.ToString();
-                                var newGroupNumber1 = newImplicantCurrentGroup.Count(x => x.Equals('1'));
+                                //var newGroupNumber1 = newImplicantCurrentGroup.Count(x => x.Equals('1'));
                                 if (nextOrderImplicants.All(x => x.Implicant != newImplicantCurrentGroup))
                                 {
-                                    nextOrderImplicants.Add(new ImplicantModel(newGroupNumber1,
-                                        newImplicantCurrentGroup));
+                                    nextOrderImplicants.Add(new ImplicantModel(currentGroupImplicant.OriginalNrOfOnes,
+                                         newImplicantCurrentGroup, currentGroupImplicant.OriginalNrOfOnes));
                                 }
                                 //nextgroup
                                 StringBuilder sb2 = new StringBuilder(newImplicantNextGroup) { [k] = '*' };
                                 newImplicantNextGroup = sb2.ToString();
                                 var newGroupNumber2 = newImplicantNextGroup.Count(x => x.Equals('1'));
+                                //if (!newImplicantNextGroup.Equals(newImplicantCurrentGroup))
                                 if (nextOrderImplicants.All(x => x.Implicant != newImplicantNextGroup))
                                 {
-                                    nextOrderImplicants.Add(new ImplicantModel(newGroupNumber2,
-                                        newImplicantNextGroup));
+                                    nextOrderImplicants.Add(new ImplicantModel(nextGroupImplicant.OriginalNrOfOnes, newImplicantNextGroup, nextGroupImplicant.OriginalNrOfOnes));
                                 }
 
                             }
@@ -352,6 +358,8 @@ namespace Ale1Project.Service
 
             //if for one nextOrderImplicants row length - 1 = number of *
             //then simplification is complete
+            //thats however not always true. lets distinctVariables plus 2 and * exist then i end recursion
+            //
 
             //if nextorderimplicants == 0 then check if there are stars in old order implicants
             //if they contain stars return them in combination with old truth table
@@ -380,6 +388,16 @@ namespace Ale1Project.Service
                         }
                     }
 
+                    //if all groups but the last  one contain * and nr of nrOfRecursions exceeded nrOfGroups then stop and build simpl. TT
+                    //if (nrOfRecursions > expressionModel.DistinctVariables.Count && dontCareCounter > 0)
+                    //{
+                    //    break;
+                    //}
+                    var newNrOfGroups = nextOrderImplicants.Max(x => x.Group) + 1;
+                    if (!AreImplicantsMinimizable(expressionModel, nextOrderImplicants, newNrOfGroups))
+                    {
+                        break;
+                    }
                     if (nextOrderImplicant.Implicant.Length - 1 != dontCareCounter)
                     {
                         continuationFlag = true;
@@ -398,6 +416,69 @@ namespace Ale1Project.Service
             }
 
             return _simplifiedTruthTable;
+        }
+
+        private bool AreImplicantsMinimizable(ExpressionModel expressionModel, List<ImplicantModel> implicants, int nrOfGroups)
+        {
+            List<int> replacableIndicesCounter = new List<int>();
+            for (int i = 0; i < nrOfGroups; i++)
+            {
+                if (i < nrOfGroups - 1)
+                {
+                    var currentGroupsImplicants = implicants.Where(x => x.Group == i).ToList();
+                    if (!currentGroupsImplicants.Any())
+                    {
+                        continue;
+                    }
+
+                    //find the next greater key in implicants. 
+                    //binary search returns index (i+1) if found. if not it finds next greatest as negative complement.
+                    //if nothing is found count is returned
+                    List<int> possibleNextGroups =
+                        (from implicant in implicants select implicant.Group).Distinct().ToList();
+                    possibleNextGroups.Sort();
+                    var index = possibleNextGroups.BinarySearch(i + 1);
+                    index = Math.Abs(index);
+                    if (index == possibleNextGroups.Count) //see binarySearch docu
+                    {
+                        continue;
+                    }
+                    //if i get the error here then i somehow need to keep the old group
+                    var groupNumber = possibleNextGroups[index];
+                    var nextGroupsImplicants = implicants.Where(x => x.Group == groupNumber).ToList();
+
+                    foreach (var currentGroupImplicant in currentGroupsImplicants)
+                    {
+                        List<int> indicesToBeReplacedByAsterix = new List<int>();
+
+                        foreach (var nextGroupImplicant in nextGroupsImplicants)
+                        {
+                            indicesToBeReplacedByAsterix.Clear();
+                            //for every in the current group need to check every item in next group
+                            //it needs to be check whether exactly one difference exists in row,
+                            //e.g. current: 00; next 01. then new implicant 0*
+                            //however only index can be change at a given time
+                            for (int j = 0; j < expressionModel.DistinctVariables.Count; j++)
+                            {
+                                if (currentGroupImplicant.Implicant[j] == '1' &&
+                                    nextGroupImplicant.Implicant[j] == '0'
+                                    || currentGroupImplicant.Implicant[j] == '0' &&
+                                    nextGroupImplicant.Implicant[j] == '1')
+                                {
+                                    indicesToBeReplacedByAsterix.Add(j);
+                                }
+                            }
+                            replacableIndicesCounter.Add(indicesToBeReplacedByAsterix.Count);
+                        }
+                    }
+                }
+            }
+
+            if (replacableIndicesCounter.Any(x => x > 1 || x == 0))
+            {
+                return true;
+            }
+            return false;
         }
 
         private List<string> CreateSimplifiedTruthTable(ExpressionModel expressionModel, List<ImplicantModel> nextOrderImplicants)
