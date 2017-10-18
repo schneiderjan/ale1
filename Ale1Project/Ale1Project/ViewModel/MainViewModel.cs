@@ -187,6 +187,8 @@ namespace Ale1Project.ViewModel
 
         //tautology
         //|(>(p,q),>(q,p)) 
+        //>(&(p,q),&(q,p))
+        
 
         //use for simplification of truth table
         //&(=(A,B),|(C,D)) 

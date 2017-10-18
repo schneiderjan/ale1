@@ -388,20 +388,16 @@ namespace Ale1Project.Service
                         }
                     }
 
-                    //if all groups but the last  one contain * and nr of nrOfRecursions exceeded nrOfGroups then stop and build simpl. TT
-                    //if (nrOfRecursions > expressionModel.DistinctVariables.Count && dontCareCounter > 0)
-                    //{
-                    //    break;
-                    //}
                     var newNrOfGroups = nextOrderImplicants.Max(x => x.Group) + 1;
-                    if (!AreImplicantsMinimizable(expressionModel, nextOrderImplicants, newNrOfGroups))
+                    if (AreImplicantsMinimizable(expressionModel, nextOrderImplicants, newNrOfGroups))
                     {
-                        break;
-                    }
-                    if (nextOrderImplicant.Implicant.Length - 1 != dontCareCounter)
-                    {
+                        //break;
                         continuationFlag = true;
                     }
+                    //if (nextOrderImplicant.Implicant.Length - 1 != dontCareCounter)
+                    //{
+                    //    continuationFlag = true;
+                    //}
                 }
 
                 if (continuationFlag)
@@ -474,7 +470,11 @@ namespace Ale1Project.Service
                 }
             }
 
-            if (replacableIndicesCounter.Any(x => x > 1 || x == 0))
+            if (!replacableIndicesCounter.Any())
+            {
+                return false;
+            }
+            else if (replacableIndicesCounter.Any(x => x == 1))
             {
                 return true;
             }
