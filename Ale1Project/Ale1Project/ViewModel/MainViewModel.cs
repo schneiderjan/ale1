@@ -207,8 +207,8 @@ namespace Ale1Project.ViewModel
 
             //FOR DEBUGGING
             _expressionModel = new ExpressionModel();
-            Prefix = "&(~p,p)";
-            _expressionModel.Prefix = "&(~p,p)";
+            Prefix = "||abc";
+            _expressionModel.Prefix = "||abc";
 
             _fixConversionService = fixConversionService;
             _truthTableService = truthTableService;
@@ -252,7 +252,7 @@ namespace Ale1Project.ViewModel
             DisjunctiveNormalForm = _truthTableService.GetDisjunctiveNormalForm(_expressionModel);
             _expressionModelDisjunctiveNormalForm.Prefix = DisjunctiveNormalForm;
             _expressionModelDisjunctiveNormalForm.DistinctVariables = _expressionModel.DistinctVariables;
-
+            
             //Calculate truth table and parse infix of DNF
             _fixConversionService.ParsePrefix(_expressionModelDisjunctiveNormalForm);
             _truthTableService.GetTruthTable(_expressionModelDisjunctiveNormalForm);
@@ -268,10 +268,14 @@ namespace Ale1Project.ViewModel
             SimplifiedDisjunctiveNormalForm = _truthTableService.GetSimplifiedDisjunctiveNormalForm(_expressionModel);
             _expressionModelSimplifiedDisjunctiveNormalForm.Prefix = SimplifiedDisjunctiveNormalForm;
             _expressionModelSimplifiedDisjunctiveNormalForm.DistinctVariables = _expressionModel.DistinctVariables;
+            _expressionModelSimplifiedDisjunctiveNormalForm.TruthTable.Rows =
+                _expressionModel.TruthTable.Rows;
+            _expressionModelSimplifiedDisjunctiveNormalForm.TruthTable.RowsSimplified =
+                _expressionModel.TruthTable.RowsSimplified;
 
             //Calculate truth table and parse infix of Simpl. DNF
             _fixConversionService.ParsePrefix(_expressionModelSimplifiedDisjunctiveNormalForm);
-            _truthTableService.GetTruthTable(_expressionModelSimplifiedDisjunctiveNormalForm);
+            _truthTableService.RevertTruthTableSimplification(_expressionModelSimplifiedDisjunctiveNormalForm, _expressionModel.TruthTable.Binary);
 
             //Get hash of Simpl. DNF
             HashDisjunctiveNormalFormSimplified = _truthTableService.CalculateHash(_expressionModelSimplifiedDisjunctiveNormalForm);

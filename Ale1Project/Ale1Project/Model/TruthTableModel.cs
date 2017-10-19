@@ -15,6 +15,7 @@ namespace Ale1Project.Model
 
         public List<string> Rows { get; set; }
         public List<string> RowsSimplified { get; set; }
+        public List<string> RowsReverted { get; set; }
         public bool[,] TableValues { get; set; }
         public bool[] Answers { get; set; }
         public string Hexadecimal { get; set; }

@@ -12,6 +12,7 @@ namespace Ale1Project.Service
         List<string> GetTruthTable(ExpressionModel expressionModel);
         string CalculateHash(ExpressionModel expressionModel);
         List<string> SimplifyTruthTable(ExpressionModel expressionModel);
+        List<string> RevertTruthTableSimplification(ExpressionModel DnfExpressionModel, string originalBinary);
         string GetDisjunctiveNormalForm(ExpressionModel expressionModel);
         string GetSimplifiedDisjunctiveNormalForm(ExpressionModel expressionModel);
     }

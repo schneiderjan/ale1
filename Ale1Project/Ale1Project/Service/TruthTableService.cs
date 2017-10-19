@@ -258,6 +258,57 @@ namespace Ale1Project.Service
             return expressionModel.TruthTable.Rows;
         }
 
+        public List<string> RevertTruthTableSimplification(ExpressionModel DnfExpressionModel, string originalBinary)
+        {
+            if (DnfExpressionModel.TruthTable.RowsSimplified.Any(x => x.Contains('*')))
+            {
+                var revertedTruthTable = new List<string>();
+                var revertedTruthTableWithOutTabs = new List<string>();
+
+                var binary = string.Empty;
+
+                revertedTruthTable.Add(DnfExpressionModel.TruthTable.Rows.FirstOrDefault());
+
+                for (var index = 1; index < DnfExpressionModel.TruthTable.Rows.Count; index++)
+                {
+                    var row = DnfExpressionModel.TruthTable.Rows[index];
+
+                    if (row[row.Length - 1].Equals('0'))
+                    {
+                        var zeroRow = DnfExpressionModel.TruthTable.RowsSimplified.First(x => x.EndsWith("0\t"));
+                        revertedTruthTable.Add(zeroRow);
+                    }
+                    else if (row[row.Length - 1].Equals('1'))
+                    {
+                        var oneRow = DnfExpressionModel.TruthTable.RowsSimplified.First(x => x.EndsWith("\t1"));
+                        revertedTruthTable.Add(oneRow);
+                    }
+                }
+
+                var temp = new List<string>(revertedTruthTable);
+                foreach (var row in temp)
+                {
+                    var x = Regex.Replace(row, @"\s+", "");
+                    revertedTruthTableWithOutTabs.Add(x);
+                }
+                for (var index = 1; index < revertedTruthTableWithOutTabs.Count; index++)
+                {
+                    var row = revertedTruthTableWithOutTabs[index];
+                    var value = row[DnfExpressionModel.DistinctVariables.Count - 1];
+                    binary += value;
+                }
+
+                DnfExpressionModel.TruthTable.Binary = binary;
+                return revertedTruthTable;
+            }
+            else
+            {
+                DnfExpressionModel.TruthTable.Binary = originalBinary;
+                return DnfExpressionModel.TruthTable.Rows;
+            }
+        }
+        
+
         private List<string> MinimizeImplicants(List<ImplicantModel> implicants, int nrOfGroups, ExpressionModel expressionModel)
         {
 
