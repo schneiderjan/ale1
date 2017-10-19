@@ -245,10 +245,16 @@ namespace Ale1Project.Service
             if (implicants.Count > 1)
             {
                 //recursive stuff
-                return MinimizeImplicants(implicants, nrOfGroups, expressionModel);
+                _simplifiedTruthTable = MinimizeImplicants(implicants, nrOfGroups, expressionModel);
             }
             //some un-simplifiable stuff. probs a tautology then jan must think of something here
+            if (_simplifiedTruthTable.Any())
+            {
+                expressionModel.TruthTable.RowsSimplified = _simplifiedTruthTable;
+                return _simplifiedTruthTable;
+            }
 
+            expressionModel.TruthTable.RowsSimplified = expressionModel.TruthTable.Rows;
             return expressionModel.TruthTable.Rows;
         }
 
@@ -515,112 +521,14 @@ namespace Ale1Project.Service
             return simplifiedTruthTable;
         }
 
-        //public List<string> SimplifyTruthTable(ExpressionModel expressionModel)
-        //{
-        //    List<string> rows = new List<string>();
-        //    List<string> truthRows = new List<string>();
-        //    List<string> result = new List<string>();
-
-        //    foreach (var str in expressionModel.TruthTable.Rows)
-        //    {
-        //        var x = Regex.Replace(str, @"\s+", "");
-        //        rows.Add(x);
-        //    }
-        //    //truthTable = rows;
-
-        //    for (int i = 1; i < rows.Count; i++)
-        //    {
-        //        if (rows[i][expressionModel.DistinctVariables.Count] == '1')
-        //        {
-        //            truthRows.Add(rows[i]);
-        //        }
-        //    }
-
-        //    if (truthRows.Count >= 2)
-        //    {
-        //        for (int i = 0; i < expressionModel.DistinctVariables.Count; i++) //Columns i
-        //        {
-        //            for (int j = 1; j < rows.Count; j++) //Rows j
-        //            {
-        //                int simplifiable = 0;
-
-        //                for (int k = 1; k < rows.Count; k++)
-        //                {
-        //                    if (rows[j][expressionModel.DistinctVariables.Count] == rows[k][expressionModel.DistinctVariables.Count]
-        //                        && rows[j][expressionModel.DistinctVariables.Count] == '1'
-        //                        && rows[j][i] == rows[k][i])
-        //                    {
-        //                        simplifiable++;
-        //                    }
-        //                }
-
-        //                if (simplifiable > 1)
-        //                {
-        //                    string leftside = String.Empty, rightside = string.Empty;
-
-        //                    for (int t = 0; t < i; t++)
-        //                    {
-        //                        leftside += "*\t";
-        //                    }
-        //                    for (int t = i + 1; t < expressionModel.DistinctVariables.Count; t++)
-        //                    {
-        //                        rightside += "*\t";
-        //                    }
-
-        //                    string tautology = String.Empty;
-        //                    if (rows[j][i] == '1')
-        //                    {
-        //                        tautology = leftside + "0\t" + rightside + "1";
-        //                        if (result.Contains(tautology))
-        //                        {
-        //                            result.Remove(tautology);
-        //                        }
-        //                    }
-        //                    else
-        //                    {
-        //                        tautology = leftside + "1\t" + rightside + "1";
-        //                    }
-
-        //                    result.Add(leftside + rows[j][i] + "\t" + rightside + "1");
-        //                }
-        //                else
-        //                {
-        //                    if (rows[j][expressionModel.DistinctVariables.Count] != '1')
-        //                    {
-        //                        string simplified = "";
-        //                        for (int t = 0; t < rows[j].Length; t++)
-        //                        {
-        //                            simplified += rows[j][t] + "\t";
-        //                        }
-        //                        result.Add(simplified);
-        //                    }
-        //                }
-        //            }
-        //        }
-
-        //    }
-        //    else
-        //    {
-        //        for (int i = 1; i < rows.Count; i++)
-        //        {
-        //            var simplifedrow = "";
-        //            for (int j = 0; j < rows[i].Length; j++)
-        //            {
-        //                simplifedrow = simplifedrow + rows[i][j] + "\t";
-        //            }
-        //            result.Add(simplifedrow);
-        //        }
-        //    }
-
-        //    //add something for 0 rows
-        //    result = result.Distinct().ToList();
-        //    result.Insert(0, expressionModel.TruthTable.Rows[0]);
-        //    expressionModel.TruthTable.RowsSimplified = result;
-        //    return result;
-        //}
-
         public string GetDisjunctiveNormalForm(ExpressionModel expressionModel)
         {
+            //is contradiction
+            if (expressionModel.TruthTable.Hexadecimal.Equals("0"))
+            {
+                expressionModel.DisjunctiveNormalForm = expressionModel.Prefix;
+                return expressionModel.Prefix;
+            }
             //PART 1 Extract all formulas out truth table
 
             //makes sure that prefix AND for any row has proper syntax.
@@ -742,6 +650,12 @@ namespace Ale1Project.Service
 
         public string GetSimplifiedDisjunctiveNormalForm(ExpressionModel expressionModel)
         {
+            //is contradiction
+            if (expressionModel.TruthTable.Hexadecimal.Equals("0"))
+            {
+                expressionModel.DisjunctiveNormalForm = expressionModel.Prefix;
+                return expressionModel.Prefix;
+            }
             //makes sure that prefix AND for any row has proper syntax.
             //aka. if you have variables ABC then one row is |(&(&(A,B),C)) with OR
             int counter = 0;

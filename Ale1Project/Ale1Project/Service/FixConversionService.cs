@@ -23,17 +23,17 @@ namespace Ale1Project.Service
 
         public string ParsePrefix(ExpressionModel expressionModel)
         {
-            expressionModel.Prefix = expressionModel.Prefix
+            var prefixInput = expressionModel.Prefix
                 .Replace(",", "")
                 .Replace("(", "")
                 .Replace(")", "")
                 .Replace(@" ", "")
                 .Trim().ToUpper();
 
-            var prefixInput = ConvertStringToList(expressionModel.Prefix);
-            prefixInput.Reverse();
+            var prefixList = ConvertStringToList(prefixInput);
+            prefixList.Reverse();
 
-            var treeNodes = GetTree(prefixInput);
+            var treeNodes = GetTree(prefixList);
             expressionModel.TreeNodes = treeNodes;
             foreach (var nodeModel in treeNodes)
             {
