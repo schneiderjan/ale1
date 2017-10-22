@@ -582,7 +582,7 @@ namespace Ale1Project.Service
                 return expressionModel.Prefix;
             }
             //is tautology but only with one variable
-            else if(expressionModel.DistinctVariables.Count == 1 && 
+            if(expressionModel.DistinctVariables.Count == 1 && 
                 expressionModel.TruthTable.Binary.Distinct().Count() == 1 && 
                 expressionModel.TruthTable.Binary.Contains('1'))
             {

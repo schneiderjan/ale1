@@ -183,6 +183,7 @@ namespace Ale1Project.ViewModel
         //|(a,b)
         //&(a,b)
         //|(|(a,b),c)
+        //&(|(a,~b),c)
 
         //tautology
         //|(>(p,q),>(q,p)) 
