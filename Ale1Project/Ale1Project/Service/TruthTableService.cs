@@ -166,6 +166,7 @@ namespace Ale1Project.Service
                 output += $"{Convert.ToByte(expressionModel.TruthTable.Binary.Substring(i, 4), 2):X}";
             }
             expressionModel.TruthTable.Hexadecimal = output;
+            expressionModel.TruthTable.Binary = new string(charArray);
             return output;
         }
 
@@ -576,6 +577,14 @@ namespace Ale1Project.Service
         {
             //is contradiction
             if (expressionModel.TruthTable.Hexadecimal.Equals("0"))
+            {
+                expressionModel.DisjunctiveNormalForm = expressionModel.Prefix;
+                return expressionModel.Prefix;
+            }
+            //is tautology but only with one variable
+            else if(expressionModel.DistinctVariables.Count == 1 && 
+                expressionModel.TruthTable.Binary.Distinct().Count() == 1 && 
+                expressionModel.TruthTable.Binary.Contains('1'))
             {
                 expressionModel.DisjunctiveNormalForm = expressionModel.Prefix;
                 return expressionModel.Prefix;

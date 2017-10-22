@@ -188,6 +188,7 @@ namespace Ale1Project.ViewModel
         //|(>(p,q),>(q,p)) 
         //>(&(p,q),&(q,p))
         //= ( > (A, B), | (~(A), B))
+        //|(a,~a)
 
         //contradiction
         //&(~p,p)
@@ -208,8 +209,8 @@ namespace Ale1Project.ViewModel
 
             //FOR DEBUGGING
             _expressionModel = new ExpressionModel();
-            Prefix = "~(&(>(&(A,C)),~(&(~(B),C))))";
-            _expressionModel.Prefix = "~(&(>(&(A,C)),~(&(~(B),C))))";
+            Prefix = "|(a,~a)";
+            _expressionModel.Prefix = "|(a,~a)";
 
             _fixConversionService = fixConversionService;
             _truthTableService = truthTableService;
