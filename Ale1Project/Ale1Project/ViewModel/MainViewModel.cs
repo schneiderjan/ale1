@@ -209,8 +209,8 @@ namespace Ale1Project.ViewModel
 
             //FOR DEBUGGING
             _expressionModel = new ExpressionModel();
-            Prefix = "|(a,~a)";
-            _expressionModel.Prefix = "|(a,~a)";
+            //Prefix = "|(a,~a)";
+            //_expressionModel.Prefix = "|(a,~a)";
 
             _fixConversionService = fixConversionService;
             _truthTableService = truthTableService;
