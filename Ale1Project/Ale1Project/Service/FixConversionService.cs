@@ -172,44 +172,51 @@ namespace Ale1Project.Service
 
         private void ConvertNodesToNand(ExpressionModel expressionModel)
         {
-            //lhs: lefthandside; rhs: righthandside
-            var stack = new Stack<NodeModel>();
-            int id = 0;
-
-            foreach (var treeNode in expressionModel.TreeNodesReversed)
+            if (!expressionModel.Prefix.Contains('%'))
             {
-                if (_operatorService.IsOperator(treeNode.Value))
+                //lhs: lefthandside; rhs: righthandside
+                var stack = new Stack<NodeModel>();
+                int id = 0;
+
+                foreach (var treeNode in expressionModel.TreeNodesReversed)
                 {
-                    var lhsNode = stack.Pop();
-                    var rhsNode = stack.Pop();
+                    if (_operatorService.IsOperator(treeNode.Value))
+                    {
+                        var lhsNode = stack.Pop();
+                        var rhsNode = stack.Pop();
 
-                    AddValueToNand(treeNode, lhsNode, rhsNode);
+                        AddValueToNand(treeNode, lhsNode, rhsNode);
 
-                    //Nand is gradually building up, therefore, need to add intermediate nand
-                    stack.Push(new NodeModel(id++, _nand));
+                        //Nand is gradually building up, therefore, need to add intermediate nand
+                        stack.Push(new NodeModel(id++, _nand));
+                    }
+                    else if (_operatorService.Not.Equals(treeNode.Value))
+                    {
+                        var valueOfNotNode = stack.Pop();
+                        var expression = $"%({valueOfNotNode.Value},{valueOfNotNode.Value})";
+
+                        stack.Push(new NodeModel(id++, expression));
+                    }
+                    else
+                    {
+                        stack.Push(treeNode);
+                    }
                 }
-                else if (_operatorService.Not.Equals(treeNode.Value))
-                {
-                    var valueOfNotNode = stack.Pop();
-                    var expression = $"%({valueOfNotNode.Value},{valueOfNotNode.Value})";
 
-                    stack.Push(new NodeModel(id++, expression));
-                }
-                else
+                //e.g. a proposition such as ~P
+                if (stack.Count > 0 && _nand.Equals(string.Empty))
                 {
-                    stack.Push(treeNode);
+                    var node = stack.Pop();
+                    _nand = node.Value;
                 }
             }
-
-            //e.g. a proposition such as ~P
-            if (stack.Count > 0 && _nand.Equals(string.Empty))
+            else
             {
-                var node = stack.Pop();
-                _nand = node.Value;
+                _nand = expressionModel.Prefix;
             }
         }
 
-       private void AddValueToNand(NodeModel operatorNode, NodeModel lhsNode, NodeModel rhsNode)
+        private void AddValueToNand(NodeModel operatorNode, NodeModel lhsNode, NodeModel rhsNode)
         {
             //p || q === ~p % ~q
             //p && q === ~(p % q)

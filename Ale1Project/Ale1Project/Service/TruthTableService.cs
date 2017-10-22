@@ -294,7 +294,7 @@ namespace Ale1Project.Service
                 for (var index = 1; index < revertedTruthTableWithOutTabs.Count; index++)
                 {
                     var row = revertedTruthTableWithOutTabs[index];
-                    var value = row[DnfExpressionModel.DistinctVariables.Count - 1];
+                    var value = row[DnfExpressionModel.DistinctVariables.Count];
                     binary += value;
                 }
 
@@ -336,7 +336,7 @@ namespace Ale1Project.Service
                     possibleNextGroups.Sort();
                     var index = possibleNextGroups.BinarySearch(i + 1);
                     index = Math.Abs(index);
-                    if (index == possibleNextGroups.Count) //see binarySearch docu
+                    if (index > possibleNextGroups.Count) //see binarySearch docu
                     {
                         continue;
                     }
