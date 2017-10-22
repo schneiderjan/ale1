@@ -175,9 +175,8 @@ namespace Ale1Project.ViewModel
         //&(A, ~(B))
         //~(&(>(&(A,C)),~(&(~(B),C))))
         //|((|(A,(B)),C)
-        //&(&(p,q),~(p))
         //&(>(|(A,~(B)),C),A)
-        //~(&(>(&(A,C)),~(&(~(B),C))))
+        //&(>(|(A,~(B)),C),B)
         //=(a,b)
         //>(a,b)
         //~a
@@ -188,9 +187,11 @@ namespace Ale1Project.ViewModel
         //tautology
         //|(>(p,q),>(q,p)) 
         //>(&(p,q),&(q,p))
-        
+        //= ( > (A, B), | (~(A), B))
+
         //contradiction
         //&(~p,p)
+        ////&(&(p,q),~(p))
 
         //use for simplification of truth table
         //&(=(A,B),|(C,D)) 
@@ -207,8 +208,8 @@ namespace Ale1Project.ViewModel
 
             //FOR DEBUGGING
             _expressionModel = new ExpressionModel();
-            Prefix = "%(a,b)";
-            _expressionModel.Prefix = "%(a,b)";
+            Prefix = "~(&(>(&(A,C)),~(&(~(B),C))))";
+            _expressionModel.Prefix = "~(&(>(&(A,C)),~(&(~(B),C))))";
 
             _fixConversionService = fixConversionService;
             _truthTableService = truthTableService;
@@ -252,7 +253,7 @@ namespace Ale1Project.ViewModel
             DisjunctiveNormalForm = _truthTableService.GetDisjunctiveNormalForm(_expressionModel);
             _expressionModelDisjunctiveNormalForm.Prefix = DisjunctiveNormalForm;
             _expressionModelDisjunctiveNormalForm.DistinctVariables = _expressionModel.DistinctVariables;
-            
+
             //Calculate truth table and parse infix of DNF
             _fixConversionService.ParsePrefix(_expressionModelDisjunctiveNormalForm);
             _truthTableService.GetTruthTable(_expressionModelDisjunctiveNormalForm);

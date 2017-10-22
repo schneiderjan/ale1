@@ -206,6 +206,7 @@ namespace Ale1Project.Service
             var rows = new List<string>();
             var truthRows = new List<string>(); //aka Epsilon m
             List<ImplicantModel> implicants = new List<ImplicantModel>();
+            _simplifiedTruthTable.Clear();
 
 
             foreach (var str in expressionModel.TruthTable.Rows)
@@ -307,7 +308,7 @@ namespace Ale1Project.Service
                 return DnfExpressionModel.TruthTable.Rows;
             }
         }
-        
+
 
         private List<string> MinimizeImplicants(List<ImplicantModel> implicants, int nrOfGroups, ExpressionModel expressionModel)
         {
@@ -336,7 +337,7 @@ namespace Ale1Project.Service
                     possibleNextGroups.Sort();
                     var index = possibleNextGroups.BinarySearch(i + 1);
                     index = Math.Abs(index);
-                    if (index > possibleNextGroups.Count) //see binarySearch docu
+                    if (index >= possibleNextGroups.Count) //see binarySearch docu
                     {
                         continue;
                     }
@@ -375,7 +376,6 @@ namespace Ale1Project.Service
                                 //for current and next group implicant
                                 var k = indicesToBeReplacedByAsterix.FirstOrDefault();
 
-                                //TODO Before adding to list make sure they dont exist to avoid duplicates
                                 //currentgroup
                                 StringBuilder sb1 = new StringBuilder(newImplicantCurrentGroup) { [k] = '*' };
                                 newImplicantCurrentGroup = sb1.ToString();
@@ -605,7 +605,10 @@ namespace Ale1Project.Service
                 counter = 0;
 
                 var answer = truthTableRow[truthTableRow.Length - 1];
-                if (answer.Equals('0')) continue;
+                if (answer.Equals('0'))
+                {
+                    continue;
+                }
 
                 for (var index = 0; index < expressionModel.DistinctVariables.Count; index++)
                 {
@@ -701,8 +704,9 @@ namespace Ale1Project.Service
 
         public string GetSimplifiedDisjunctiveNormalForm(ExpressionModel expressionModel)
         {
-            //is contradiction
-            if (expressionModel.TruthTable.Hexadecimal.Equals("0"))
+            //is contradiction or tautology
+            if (expressionModel.TruthTable.Hexadecimal.Equals("0") ||
+                (expressionModel.TruthTable.Binary.Distinct().Count() == 1 && expressionModel.TruthTable.Binary.Contains('1')))
             {
                 expressionModel.DisjunctiveNormalForm = expressionModel.Prefix;
                 return expressionModel.Prefix;
@@ -724,14 +728,18 @@ namespace Ale1Project.Service
                 }
             }
 
+            //something when there is only one row?
+
             foreach (var truthTableRow in tableRowsWithoutTabs)
             {
                 for (var innerIndex = 0; innerIndex < expressionModel.DistinctVariables.Count; innerIndex++)
                 {
                     var value = truthTableRow[innerIndex];
                     var variable = expressionModel.DistinctVariables[innerIndex];
-
-                    simplifiedDisjunctiveNormalForm = AddVariableToDisjunctiveNormalForm(value, ref counter, variable, simplifiedDisjunctiveNormalForm);
+                    if (!value.Equals('*'))
+                    {
+                        simplifiedDisjunctiveNormalForm = AddVariableToDisjunctiveNormalForm(value, ref counter, variable, simplifiedDisjunctiveNormalForm);
+                    }
                 }
             }
             return simplifiedDisjunctiveNormalForm;
