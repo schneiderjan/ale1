@@ -37,7 +37,7 @@
                     Width="50"
                     Content="Prefix" />
 
-                <TextBox Grid.Column="1" Text="{Binding Prefix, Mode=TwoWay}" />
+                <TextBox Grid.Column="1" Text="{Binding Prefix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <Button
                     Grid.Column="3"
